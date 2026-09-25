@@ -25,6 +25,7 @@ location: "Geneva"
 missing: [photos]
 
 # Pozele amintirii (poți pune oricâte; încarcă-le întâi în public/img/amintiri/<numele-acestui-fișier>/, numite 01.jpg, 02.jpg…; prima e coperta).
+# Dacă pe card coperta e tăiată prost, adaugă și: coverPosition: "50% 85%" (al doilea număr: 0% = sus, 100% = jos).
 # Pentru fiecare poză scrie calea și o scurtă descriere:
 images:
   - src: /img/amintiri/2026-exemplu/01.jpg

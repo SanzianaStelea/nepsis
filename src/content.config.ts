@@ -33,6 +33,9 @@ const amintiri = defineCollection({
     date: z.coerce.date().optional(),
     // Pune `false` când data e doar aproximativă (folosită numai la sortare, nu se afișează).
     showDate: z.boolean().default(true),
+    // Încadrarea copertei (prima poză) pe card, ca `object-position` din CSS, ex. „50% 85%”
+    // = se vede partea de jos. Implicit „50% 42%”.
+    coverPosition: z.string().optional(),
     // Pentru amintirile fără dată exactă: mai mare = mai sus în listă.
     order: z.number().default(0),
     images: z

@@ -45,6 +45,7 @@ const { date, showDate, location, title } = memory.data;
         loading="lazy"
         decoding="async"
         class="aspect-[4/3] w-full rounded-lg bg-stone-100 object-cover object-[50%_42%]"
+        style={memory.data.coverPosition ? `object-position: ${memory.data.coverPosition}` : undefined}
       />
     ) : (
       <div aria-hidden="true" class="flex aspect-[4/3] w-full items-center justify-center rounded-lg bg-brand-50">
