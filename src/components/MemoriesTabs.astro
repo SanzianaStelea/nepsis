@@ -1,0 +1,36 @@
+---
+import { type Locale, useTranslations, localePath } from '../i18n';
+
+/**
+ * Sub-navigația Amintirilor: „Evenimente” (arhiva) și „Galerie foto”. Sunt
+ * legături simple, nu file ARIA — fiecare vedere are adresa ei și merge și fără JS.
+ */
+interface Props {
+  lang: Locale;
+  current: 'events' | 'gallery';
+}
+
+const { lang, current } = Astro.props;
+const t = useTranslations(lang);
+const items = [
+  { id: 'events', href: '/amintiri/', label: t('memories.tabEvents') },
+  { id: 'gallery', href: '/amintiri/galerie/', label: t('memories.tabGallery') },
+] as const;
+---
+
+<nav aria-label={t('memories.sections')} class="mt-6 flex gap-6 border-b border-stone-200">
+  {
+    items.map((item) => (
+      <a
+        href={localePath(lang, item.href)}
+        aria-current={item.id === current ? 'page' : undefined}
+        class:list={[
+          '-mb-px inline-flex min-h-11 items-center border-b-2 px-1 text-base font-semibold',
+          item.id === current ? 'border-brand-800 text-brand-900' : 'border-transparent text-stone-600 hover:text-brand-900',
+        ]}
+      >
+        {item.label}
+      </a>
+    ))
+  }
+</nav>

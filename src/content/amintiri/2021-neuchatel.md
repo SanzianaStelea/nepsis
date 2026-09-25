@@ -3,7 +3,7 @@ title: "Întâlnire la Neuchâtel"
 year: 2021
 date: 2021-06-12
 images:
-  - src: /img/2021_neuchatel.jpg
+  - src: /img/amintiri/2021-neuchatel/01.jpg
     alt: "Poza de grup Neuchâtel 2021"
 lang: ro
 translationKey: amintire-2021-neuchatel

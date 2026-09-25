@@ -2,7 +2,7 @@
 title: "Fête patronale de Nepsis — Saint Jean Cassien"
 date: 2026-02-28
 location: "Monastère « Protection de la Mère de Dieu », Les Sciernes d'Albeuve"
-image: /img/2026-hram-EN.jpeg
+image: /img/evenimente/2026-02-28-hram-sf-ioan-casian/afis-en.jpeg
 imageAlt: "Affiche de la fête patronale Nepsis 2026 — Saint Jean Cassien"
 registrationLink: https://forms.gle/Mb93HsvSYkHwVHWv6
 lang: fr

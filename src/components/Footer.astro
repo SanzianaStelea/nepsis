@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { type Locale, useTranslations, localePath } from '../i18n';
-import ObfuscatedEmail from './ObfuscatedEmail.astro';
+import EmailLink from './EmailLink.astro';
 import SocialLinks from './SocialLinks.astro';
 import logo from '../assets/logo-small.jpg';
 
@@ -12,42 +12,32 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const year = new Date().getFullYear();
+const legatura =
+  'inline-flex min-h-11 items-center text-brand-200 underline decoration-brand-700 underline-offset-2 hover:text-white';
 ---
 
-<footer class="mt-16 border-t border-stone-200 bg-brand-950 text-stone-300">
-  <div class="mx-auto flex max-w-3xl flex-col items-center gap-6 px-4 py-14 text-center">
-    <a href={localePath(lang, '/')} class="flex flex-col items-center gap-4">
-      <Image
-        src={logo}
-        alt=""
-        width="160"
-        height="160"
-        format="webp"
-        class="h-20 w-20 rounded-full border-2 border-white/20 object-cover shadow-md"
-        loading="lazy"
-      />
-      <span class="font-serif text-2xl font-bold uppercase tracking-wide text-white">{t('site.name')}</span>
+<!-- Subsol compact: un singur rând pe ecran lat, trei rânduri scurte pe telefon. -->
+<footer class="mt-0 bg-brand-950 text-stone-300">
+  <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 md:flex-row md:items-center md:justify-between">
+    <a href={localePath(lang, '/')} class="flex min-h-11 items-center gap-3">
+      <Image src={logo} alt="" width="80" height="80" format="webp" class="h-10 w-10 rounded-full" loading="lazy" />
+      <span class="font-serif text-lg font-bold text-white">{t('site.name')}</span>
     </a>
-
-    <p class="max-w-md text-sm leading-relaxed text-stone-400">{t('footer.tagline')}</p>
 
     <SocialLinks
       showGroups={false}
-      class="justify-center gap-3 [&_a]:text-stone-400 [&_a:hover]:bg-brand-800 [&_a:hover]:text-white"
+      class="-ml-2 flex-wrap gap-1 md:ml-0 [&_a]:text-stone-400 [&_a:hover]:bg-brand-800 [&_a:hover]:text-white"
     />
 
-    <p class="text-sm">
-      <ObfuscatedEmail class="text-brand-200 underline decoration-brand-700 underline-offset-2 hover:text-white" />
-      <span class="mx-2 text-stone-600" aria-hidden="true">·</span>
-      <a href={localePath(lang, '/newsletter/')} class="underline decoration-brand-700 underline-offset-2 hover:text-white">
-        {t('contact.newsletterLink')}
-      </a>
-    </p>
+    <ul class="flex flex-wrap gap-x-6 text-sm">
+      <li><EmailLink class={legatura} /></li>
+      <li>
+        <a href={localePath(lang, '/newsletter/')} class={legatura}>{t('contact.newsletterLink')}</a>
+      </li>
+    </ul>
   </div>
 
-  <div class="border-t border-brand-900">
-    <p class="mx-auto max-w-6xl px-4 py-4 text-center text-xs text-stone-400">
-      © {year} Nepsis Elvetia. {t('footer.rights')}
-    </p>
-  </div>
+  <p class="border-t border-brand-900 px-4 py-3 text-center text-xs text-stone-400">
+    © {year} Nepsis Elvetia. {t('footer.rights')}
+  </p>
 </footer>

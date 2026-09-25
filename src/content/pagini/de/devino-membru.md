@@ -13,7 +13,7 @@ Schau auf die [Veranstaltungsseite](/de/evenimente/), um zu sehen, was ansteht, 
 
 ## Bleib mit uns in Kontakt
 
-- **Schreib uns eine E-Mail** an <a href="#" class="email-protejat" data-x="nepsis.ch" data-y="mitropolia" data-z="eu"><span class="sr-only">E-mail</span></a> und erzähl uns ein paar Worte über dich. Wir nehmen dich in unsere internen **WhatsApp-Gruppen** auf, in denen alle Aktivitäten angekündigt werden.
+- **Schreib uns eine E-Mail** an [nepsis.ch@mitropolia.eu](mailto:nepsis.ch@mitropolia.eu) und erzähl uns ein paar Worte über dich. Wir nehmen dich in unsere internen **WhatsApp-Gruppen** auf, in denen alle Aktivitäten angekündigt werden.
 - [Abonniere den Newsletter](/de/newsletter/), um die wichtigen Neuigkeiten per E-Mail zu erhalten.
 - Folge uns in den sozialen Netzwerken; die Links findest du am Ende der Seite.
 

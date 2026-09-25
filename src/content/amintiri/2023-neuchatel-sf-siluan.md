@@ -3,9 +3,11 @@ title: "Vizită la Neuchatel și priveghere pentru Sfântul Siluan Athonitul"
 year: 2023
 date: 2023-09-23
 images:
-  - src: /img/evenimente/2023_09_neuchatel_1.jpeg
+  - src: /img/amintiri/2023-neuchatel-sf-siluan/01.jpeg
     alt: "poza grup la parohia Neuchatel"
-  - src: /img/evenimente/2023_09_neuchatel_3.jpeg
+  - src: /img/amintiri/2023-neuchatel-sf-siluan/02.jpeg
+    alt: "Tineri Nepsis cu steagul României pe malul lacului Neuchâtel"
+  - src: /img/amintiri/2023-neuchatel-sf-siluan/03.jpeg
     alt: "poza grup in oras"
 lang: ro
 translationKey: amintire-2023-neuchatel

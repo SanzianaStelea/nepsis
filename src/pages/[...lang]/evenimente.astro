@@ -1,10 +1,10 @@
 ---
-import { Image } from 'astro:assets';
+import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import EventCard from '../../components/EventCard.astro';
-import { langStaticPaths, localeFromParam, localePath, useTranslations } from '../../i18n';
-import { getEvents, splitEvents, getOptionalPage } from '../../lib/content';
-import psalticaLogo from '../../assets/nepsis_psaltica_logo.jpg';
+import FallbackBadge from '../../components/FallbackBadge.astro';
+import { formatDate, langStaticPaths, localeFromParam, localePath, useTranslations } from '../../i18n';
+import { getEvents, splitEvents } from '../../lib/content';
 
 export function getStaticPaths() {
   return langStaticPaths();
@@ -13,102 +13,101 @@ export function getStaticPaths() {
 const lang = localeFromParam(Astro.params.lang);
 const t = useTranslations(lang);
 
-// Împărțirea se face automat la fiecare build, după data evenimentului.
-const { upcoming, past } = splitEvents(await getEvents(lang));
-
-// Calendarul anual, editabil ca simplu fișier Markdown (opțional).
-const calendar = await getOptionalPage('calendar', lang);
-const CalendarContent = calendar?.Content;
+// Împărțirea se face automat la fiecare build, după data evenimentului. Cele
+// trecute nu mai apar aici: povestea lor se scrie la Amintiri.
+const { upcoming } = splitEvents(await getEvents(lang));
+const [urmatorul, ...altele] = upcoming;
+const alteleRandate = await Promise.all(
+  altele.map(async (event) => ({ event, Content: (await render(event)).Content })),
+);
 ---
 
 <Base lang={lang} title={`${t('activities.title')} · ${t('site.name')}`} description={t('activities.description')}>
-  <div class="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-    <!--
-      Titlul paginii și fraza de întâmpinare au fost scoase la cererea
-      utilizatorului. „Următorul eveniment” urcă în locul lor ca h1: pagina
-      trebuie să păstreze un titlu de nivel întâi pentru cititoarele de ecran
-      și pentru indexare, iar numele rubricii rămâne în <title>.
-    -->
-    <section aria-labelledby="urmeaza">
+  <!--
+    Titlul paginii și fraza de întâmpinare au fost scoase la cererea
+    utilizatorului. „Următorul eveniment” urcă în locul lor ca h1: pagina
+    trebuie să păstreze un titlu de nivel întâi pentru cititoarele de ecran
+    și pentru indexare, iar numele rubricii rămâne în <title>.
+  -->
+  <section aria-labelledby="urmeaza" class="py-10 sm:py-14">
+    <div class="mx-auto max-w-5xl px-4">
       <h1 id="urmeaza" class="font-serif text-3xl font-bold text-brand-950 sm:text-4xl">
         {t('activities.upcoming')}
       </h1>
       {
-        upcoming.length === 0 ? (
-          <p class="mt-4 max-w-prose rounded-lg border border-brand-100 bg-brand-50 p-5 text-stone-700">
-            {t('activities.noUpcoming')}
-          </p>
-        ) : (
-          <div class="mt-6 space-y-8">
-            {upcoming.map((event, i) => (
-              <EventCard event={event} lang={lang} detailed={i === 0} headingLevel="h3" />
-            ))}
+        urmatorul ? (
+          <div class="mt-6">
+            <EventCard event={urmatorul} lang={lang} variant="full" headingLevel="h2" />
           </div>
+        ) : (
+          <p class="mt-4 max-w-prose text-stone-700">{t('activities.noUpcoming')}</p>
         )
       }
-    </section>
+    </div>
+  </section>
 
-    <!-- Calendarul anual (editabil din src/content/pagini/ro/calendar.md) -->
-    {
-      calendar && CalendarContent && (
-        <section class="mt-14" aria-labelledby="calendar-anual">
-          <h2 id="calendar-anual" class="text-2xl font-bold uppercase tracking-wide text-brand-950">
-            {calendar.entry.data.title}
-          </h2>
-          <div class="prose-md mt-6 rounded-xl border border-stone-200 bg-white p-6 text-stone-700 shadow-sm sm:p-8">
-            <CalendarContent />
-          </div>
-        </section>
-      )
-    }
-
-    <!-- Activitate permanentă -->
-    <section class="mt-14" aria-labelledby="permanent">
-      <div class="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm md:grid md:grid-cols-3">
-        <Image
-          src={psalticaLogo}
-          alt={t('psaltica.logoAlt')}
-          widths={[400, 700, 1000]}
-          sizes="(min-width: 768px) 33vw, 62vw"
-          format="webp"
-          quality={70}
-          loading="lazy"
-          decoding="async"
-          class="h-full w-full object-cover"
-        />
-        <div class="p-6 md:col-span-2 md:p-8">
-          <h2 id="permanent" class="text-xl font-semibold text-brand-900 sm:text-2xl">
-            {t('activities.permanent')}
-          </h2>
-          <p class="mt-3 text-stone-700">{t('activities.permanentText')}</p>
-          <p class="mt-5">
-            <a
-              href={localePath(lang, '/psaltica/')}
-              class="inline-block rounded-lg bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-            >
-              {t('activities.permanentLink')}
-            </a>
-          </p>
+  {
+    alteleRandate.length > 0 && (
+      <section aria-labelledby="alte-evenimente" class="pb-10">
+        <div class="mx-auto max-w-5xl px-4">
+          <h2 id="alte-evenimente" class="text-2xl font-bold text-brand-950">{t('activities.moreUpcoming')}</h2>
+          <ol class="mt-6 divide-y divide-stone-200 border-y border-stone-200">
+            {alteleRandate.map(({ event, Content }) => {
+              const fallback = event.data.lang !== lang;
+              return (
+                <li
+                  id={`eveniment-${event.data.translationKey}`}
+                  class="scroll-mt-24 grid gap-2 py-6 sm:grid-cols-[11rem_1fr] sm:gap-6"
+                >
+                  <time datetime={event.data.date.toISOString().slice(0, 10)} class="text-sm font-semibold text-brand-700">
+                    {formatDate(event.data.date, lang)}
+                  </time>
+                  <div>
+                    {fallback && <FallbackBadge lang={lang} />}
+                    <div lang={fallback ? 'ro' : undefined}>
+                      <h3 class="text-lg font-semibold text-brand-900">{event.data.title}</h3>
+                      {event.data.location && <p class="text-sm text-stone-600">{event.data.location}</p>}
+                      <div class="prose-md mt-3 text-stone-700">
+                        <Content />
+                      </div>
+                    </div>
+                    {event.data.registrationLink && (
+                      <a href={event.data.registrationLink} target="_blank" rel="noopener" class="link-text mt-2">
+                        {t('activities.register')}
+                        <span class="sr-only"> {t('common.newTab')}</span>
+                      </a>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
-      </div>
-    </section>
+      </section>
+    )
+  }
 
-    <!-- Evenimente recente: doar ultimele 3 -->
-    <section class="mt-14" aria-labelledby="recente">
-      <h2 id="recente" class="text-2xl font-bold uppercase tracking-wide text-brand-950">
-        {t('activities.past')}
-      </h2>
-      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {past.slice(0, 3).map((event) => <EventCard event={event} lang={lang} headingLevel="h3" />)}
+  <!-- Activitate permanentă -->
+  <section class="mx-auto max-w-5xl px-4" aria-labelledby="permanent">
+    <div class="border-t border-stone-200 py-10">
+      <h2 id="permanent" class="text-xl font-semibold text-brand-900">{t('activities.permanent')}</h2>
+      <p class="mt-3 max-w-prose text-stone-700">{t('activities.permanentText')}</p>
+      <a href={localePath(lang, '/psaltica/')} class="link-text mt-2">{t('activities.permanentLink')}</a>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="bg-brand-50" aria-labelledby="fii-la-curent">
+    <div class="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-10 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 id="fii-la-curent" class="text-xl font-bold text-brand-950">{t('activities.newsletterTitle')}</h2>
+        <p class="mt-1 text-stone-700">{t('activities.newsletterText')}</p>
       </div>
-      <p class="mt-10 text-center">
-        <a
-          href={localePath(lang, '/amintiri/')}
-          class="inline-block rounded-full bg-brand-700 px-7 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800"
-        >
-          {t('home.seeMemories')} →
-        </a>
-      </p>
-    </section>
-  </div>
+      <a href={localePath(lang, '/newsletter/')} class="btn btn-primary shrink-0">{t('contact.newsletterLink')}</a>
+    </div>
+  </section>
+
+  <p class="mx-auto max-w-5xl px-4 py-10">
+    <a href={localePath(lang, '/amintiri/')} class="link-text">{t('activities.pastInMemories')} →</a>
+  </p>
 </Base>

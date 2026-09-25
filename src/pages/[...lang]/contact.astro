@@ -1,6 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import ObfuscatedEmail from '../../components/ObfuscatedEmail.astro';
+import EmailLink from '../../components/EmailLink.astro';
 import SocialLinks from '../../components/SocialLinks.astro';
 import { langStaticPaths, localeFromParam, localePath, useTranslations } from '../../i18n';
 
@@ -21,34 +21,27 @@ const t = useTranslations(lang);
       indexare, iar numele rubricii rămâne în <title>.
     -->
     <div class="grid gap-6 md:grid-cols-2">
-      <section class="rounded-xl border border-brand-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="contact-email">
+      <section class="rounded-xl border border-brand-200 bg-white p-6 sm:p-8" aria-labelledby="contact-email">
         <h1 id="contact-email" class="text-xl font-semibold text-brand-900">{t('contact.writeUs')}</h1>
         <p class="mt-3 text-stone-700">
           {t('contact.emailIntro')}
           <br />
-          <ObfuscatedEmail class="text-lg font-semibold text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-900" />
+          <EmailLink class="text-lg font-semibold text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-900" />
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-3">
-          <!-- Butonul asamblează adresa la click — nu există „mailto:” în clar în HTML. -->
-          <a
-            href="#"
-            class="email-protejat-buton inline-block rounded-lg bg-brand-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-            data-x="nepsis.ch"
-            data-y="mitropolia"
-            data-z="eu"
-          >
+          <a href="mailto:nepsis.ch@mitropolia.eu" class="btn btn-primary">
             {t('contact.emailButton')}
           </a>
           <a
             href={localePath(lang, '/newsletter/')}
-            class="inline-block rounded-lg bg-brand-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
+            class="btn btn-secondary"
           >
             {t('contact.newsletterButton')}
           </a>
         </div>
       </section>
 
-      <section class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="contact-social">
+      <section class="rounded-xl border border-stone-200 bg-white p-6 sm:p-8" aria-labelledby="contact-social">
         <h2 id="contact-social" class="text-xl font-semibold text-brand-900">{t('contact.social')}</h2>
         <p class="mt-3 text-stone-700">{t('contact.groupsText')}</p>
         <SocialLinks class="mt-5 -ml-2 flex-wrap" />
@@ -57,7 +50,7 @@ const t = useTranslations(lang);
 
     <!-- Invitație: devino membru -->
     <section
-      class="mt-6 flex flex-col items-center gap-4 rounded-xl bg-brand-800 p-8 text-center text-white shadow-sm sm:flex-row sm:justify-between sm:text-left"
+      class="mt-6 flex flex-col items-center gap-4 on-dark rounded-xl bg-brand-800 p-8 text-center text-white sm:flex-row sm:justify-between sm:text-left"
       aria-labelledby="contact-membru"
     >
       <div>
@@ -66,7 +59,7 @@ const t = useTranslations(lang);
       </div>
       <a
         href={localePath(lang, '/devino-membru/')}
-        class="shrink-0 rounded-lg bg-white px-6 py-3 text-sm font-semibold text-brand-900 shadow-sm transition-colors hover:bg-brand-50"
+        class="btn btn-on-dark shrink-0"
       >
         {t('contact.joinLink')} →
       </a>
@@ -74,7 +67,7 @@ const t = useTranslations(lang);
 
     <!-- Informații secundare -->
     <div class="mt-6 grid gap-6 md:grid-cols-2">
-      <section class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="contact-banca">
+      <section class="rounded-xl border border-stone-200 bg-white p-6 sm:p-8" aria-labelledby="contact-banca">
         <h2 id="contact-banca" class="text-xl font-semibold text-brand-900">{t('contact.bank')}</h2>
         <dl class="mt-4 space-y-2 text-stone-700">
           <div>
@@ -92,7 +85,7 @@ const t = useTranslations(lang);
         </dl>
       </section>
 
-      <section class="rounded-xl border border-stone-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="contact-utile">
+      <section class="rounded-xl border border-stone-200 bg-white p-6 sm:p-8" aria-labelledby="contact-utile">
         <h2 id="contact-utile" class="text-xl font-semibold text-brand-900">{t('contact.useful')}</h2>
         <ul class="mt-4 list-disc space-y-2 pl-5 text-stone-700">
           <li>
@@ -121,14 +114,3 @@ const t = useTranslations(lang);
 
   </div>
 </Base>
-
-<script>
-  // Același mecanism anti-spam și pentru butonul mare de e-mail.
-  document.querySelectorAll<HTMLAnchorElement>('.email-protejat-buton').forEach((el) => {
-    el.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const { x, y, z } = el.dataset;
-      window.location.href = `mailto:${x}@${y}.${z}`;
-    });
-  });
-</script>

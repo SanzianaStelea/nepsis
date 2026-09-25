@@ -4,7 +4,7 @@ year: 2023
 date: 2023-12-02
 showDate: false
 images:
-  - src: /img/evenimente/2023-12-05-film.jpeg
+  - src: /img/amintiri/2023-proiectii-film/01.jpeg
     alt: "poza de la proiectie film Lausanne"
 lang: ro
 translationKey: amintire-2023-film

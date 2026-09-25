@@ -1,83 +1,111 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
-import { type Locale, useTranslations, formatDate, withBase } from '../i18n';
+import { type Locale, useTranslations, formatDate, localePath } from '../i18n';
+import { rezumatText } from '../lib/content';
+import { imageSize, thumbSrcset, thumbUrl } from '../lib/images';
+import FallbackBadge from './FallbackBadge.astro';
 
 /**
- * Card de eveniment. `detailed` afișează și descrierea completă (folosit la
- * evenimentele viitoare); fără el, cardul rămâne compact (arhiva).
+ * Cardul unui eveniment — singurul card cu chenar de pe site, fiindcă e un
+ * conținut de sine stătător, pe care se poate acționa.
+ *
+ * - `full`: descrierea completă și butonul de înscriere (pagina de evenimente);
+ * - `summary`: un rezumat de trei rânduri și un buton spre pagina de evenimente
+ *   (prima pagină).
+ *
+ * Afișul nu se decupează niciodată: se vede întreg, cu dimensiunile reale.
  */
 interface Props {
   event: CollectionEntry<'evenimente'>;
   lang: Locale;
-  detailed?: boolean;
+  variant?: 'full' | 'summary';
   headingLevel?: 'h2' | 'h3';
 }
 
-const { event, lang, detailed = false, headingLevel = 'h3' } = Astro.props;
+const { event, lang, variant = 'full', headingLevel = 'h3' } = Astro.props;
 const t = useTranslations(lang);
 const { Content } = await render(event);
 const Heading = headingLevel;
+const { title, image, imageAlt, translationKey } = event.data;
+// Evenimentul netradus cade pe română: îl marcăm ca atare.
+const fallback = event.data.lang !== lang;
+const size = image ? await imageSize(image) : undefined;
 ---
 
 <article
-  id={`eveniment-${event.data.translationKey}`}
-  class="overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm"
+  id={`eveniment-${translationKey}`}
+  class="scroll-mt-24 overflow-hidden rounded-xl border border-stone-200 bg-white"
 >
-  <div class:list={[detailed && event.data.image && 'md:grid md:grid-cols-2']}>
+  <div class:list={[image && 'md:grid md:grid-cols-[2fr_3fr]']}>
     {
-      event.data.image && (
+      image && size && (
         <img
-          src={withBase(event.data.image)}
-          alt={event.data.imageAlt ?? event.data.title}
+          src={thumbUrl(image, 960)}
+          srcset={thumbSrcset(image, [480, 960, 1600])}
+          sizes="(min-width: 768px) 40vw, 100vw"
+          width={size.width}
+          height={size.height}
+          alt={imageAlt ?? title}
           loading="lazy"
-          class:list={['h-full w-full object-cover', detailed ? 'max-h-[34rem]' : 'aspect-[4/3]']}
+          decoding="async"
+          class="h-auto w-full bg-brand-50 object-contain md:max-h-[36rem]"
         />
       )
     }
-    <div class="flex flex-col gap-3 p-6">
-      <Heading class="text-xl font-semibold text-brand-900 sm:text-2xl">{event.data.title}</Heading>
-      <p class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-stone-600">
-        <span class="inline-flex items-center gap-1.5">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M3 9h18M8 3v4M16 3v4" />
-          </svg>
-          <time datetime={event.data.date.toISOString().slice(0, 10)}>{formatDate(event.data.date, lang)}</time>
-        </span>
+    <div class="flex flex-col gap-3 p-6 sm:p-8">
+      {fallback && <FallbackBadge lang={lang} class="self-start" />}
+      <div class="flex flex-col gap-3" lang={fallback ? 'ro' : undefined}>
+        <Heading class="text-xl font-semibold text-brand-900 sm:text-2xl">{title}</Heading>
+        <p class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-stone-600">
+          <span class="inline-flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M3 9h18M8 3v4M16 3v4" />
+            </svg>
+            <time datetime={event.data.date.toISOString().slice(0, 10)} lang={lang}>{formatDate(event.data.date, lang)}</time>
+          </span>
+          {
+            event.data.location && (
+              <span class="inline-flex items-center gap-1.5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z" />
+                  <circle cx="12" cy="10" r="2.5" />
+                </svg>
+                {event.data.location}
+              </span>
+            )
+          }
+        </p>
         {
-          event.data.location && (
-            <span class="inline-flex items-center gap-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 shrink-0 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z" />
-                <circle cx="12" cy="10" r="2.5" />
-              </svg>
-              {event.data.location}
-            </span>
+          variant === 'full' ? (
+            <div class="prose-md text-stone-700">
+              <Content />
+            </div>
+          ) : (
+            <p class="line-clamp-3 text-stone-700">{rezumatText(event.body, 220)}</p>
           )
         }
-      </p>
+      </div>
       {
-        detailed && (
-          <div class="prose-md text-stone-700">
-            <Content />
-          </div>
-        )
-      }
-      {
-        detailed && event.data.registrationLink && (
+        variant === 'full' && event.data.registrationLink && (
           <p class="mt-2">
-            <a
-              href={event.data.registrationLink}
-              target="_blank"
-              rel="noopener"
-              class="inline-block rounded-lg bg-brand-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-            >
+            <a href={event.data.registrationLink} target="_blank" rel="noopener" class="btn btn-primary">
               {t('activities.register')}
+              <span class="sr-only"> {t('common.newTab')}</span>
             </a>
           </p>
         )
       }
-      {!detailed && <slot />}
+      {
+        variant === 'summary' && (
+          <p class="mt-2">
+            <a href={localePath(lang, `/evenimente/#eveniment-${translationKey}`)} class="btn btn-primary">
+              {t('activities.details')}
+              <span class="sr-only" lang={fallback ? 'ro' : undefined}>: {title}</span>
+            </a>
+          </p>
+        )
+      }
     </div>
   </div>
 </article>

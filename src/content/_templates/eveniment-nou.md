@@ -15,9 +15,9 @@ date: 2026-05-17
 # Locația (opțional — șterge linia dacă nu e cazul):
 location: "Parohia Ortodoxă Română, Lausanne"
 
-# Afișul sau o poză (opțional). Încarcă întâi poza în folderul public/img/
-# apoi scrie aici calea ei:
-image: /img/numele-pozei.jpg
+# Afișul sau o poză (opțional). Încarcă întâi afișul în public/img/evenimente/<numele-acestui-fișier>/
+# apoi scrie aici calea lui:
+image: /img/evenimente/2026-09-20-exemplu/afis.jpg
 imageAlt: "Descrierea pozei (pentru nevăzători și Google)"
 
 # Link de înscriere, de ex. un formular Google (opțional):

@@ -18,7 +18,7 @@ const formUrl =
     <h1 class="font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{t('newsletter.heading')}</h1>
     <p class="mt-3 max-w-prose text-lg text-stone-600">{t('newsletter.text')}</p>
 
-    <div class="mt-8 overflow-hidden rounded-xl border border-stone-200 bg-white shadow-sm">
+    <div class="mt-8 overflow-hidden rounded-xl border border-stone-200 bg-white">
       <iframe
         src={`${formUrl}?embedded=true`}
         width="100%"
@@ -33,7 +33,7 @@ const formUrl =
         href={formUrl}
         target="_blank"
         rel="noopener"
-        class="font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-900"
+        class="link-text"
       >
         {t('newsletter.openForm')}
       </a>

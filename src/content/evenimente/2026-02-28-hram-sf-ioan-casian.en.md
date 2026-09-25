@@ -2,7 +2,7 @@
 title: "Nepsis Patron Saint Feast — Saint John Cassian"
 date: 2026-02-28
 location: "Monastery “Protection of the Mother of God”, Les Sciernes d'Albeuve"
-image: /img/2026-hram-EN.jpeg
+image: /img/evenimente/2026-02-28-hram-sf-ioan-casian/afis-en.jpeg
 imageAlt: "Poster of the 2026 Nepsis Patron Saint Feast — Saint John Cassian"
 registrationLink: https://forms.gle/Mb93HsvSYkHwVHWv6
 lang: en

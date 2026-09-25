@@ -1,16 +1,19 @@
 ---
-title: "Drumeție Nepsis Elveția"
+title: "Drumeție Nepsis — cateheză cu Părintele Dionisie"
 year: 2025
 date: 2025-08-01
 images:
-  - src: /img/2025-august-excursie-1.jpeg
-    alt: "Poză August 2025 - 1"
-  - src: /img/2025-august-excursie-3.jpeg
-    alt: "Poză August 2025 - 2"
-  - src: /img/2025-august-excursie-2.jpeg
-    alt: "Poză August 2025 - 3"
-  - src: /img/2025-august-excursie-4.jpeg
-    alt: "Poză August 2025 - 4"
+  - src: /img/amintiri/2025-drumetie-lauterbrunnen/01.jpeg
+    alt: "Drumeția din valea Lauterbrunnen, august 2025 — fotografia 1"
+  - src: /img/amintiri/2025-drumetie-lauterbrunnen/02.jpeg
+    alt: "Drumeția din valea Lauterbrunnen, august 2025 — fotografia 2"
+  - src: /img/amintiri/2025-drumetie-lauterbrunnen/03.jpeg
+    alt: "Drumeția din valea Lauterbrunnen, august 2025 — fotografia 3"
+  - src: /img/amintiri/2025-drumetie-lauterbrunnen/04.jpeg
+    alt: "Drumeția din valea Lauterbrunnen, august 2025 — fotografia 4"
+  - src: /img/amintiri/2025-drumetie-lauterbrunnen/05.jpg
+    alt: "Poză de grup cu părintele pe o pajiște din valea Lauterbrunnen"
+location: "Lauterbrunnen"
 lang: ro
 translationKey: amintire-2025-lauterbrunnen
 ---

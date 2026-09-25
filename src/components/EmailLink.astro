@@ -1,0 +1,14 @@
+---
+/**
+ * Adresa de e-mail a frăției, ca legătură `mailto:` obișnuită: textul vizibil
+ * este chiar adresa, deci se poate citi, copia și accesa din tastatură.
+ */
+interface Props {
+  class?: string;
+  address?: string;
+}
+
+const { class: extra = '', address = 'nepsis.ch@mitropolia.eu' } = Astro.props;
+---
+
+<a href={`mailto:${address}`} class:list={[extra]}>{address}</a>

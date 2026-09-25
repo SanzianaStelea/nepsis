@@ -70,3 +70,6 @@ dist/
 .astro/
 npm-debug.log*
 .DS_Store
+
+# Capturi și rapoarte ale workflow-ului site-improve
+.claude/review/out/

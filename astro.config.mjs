@@ -68,6 +68,8 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
+      // Miniaturile generate la build (/thumbs/…) nu sunt pagini.
+      filter: (page) => !page.includes('/thumbs/'),
       i18n: {
         defaultLocale: 'ro',
         locales: { ro: 'ro', fr: 'fr', en: 'en', de: 'de' },

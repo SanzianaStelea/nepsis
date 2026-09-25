@@ -1,0 +1,22 @@
+---
+import { type Locale, useTranslations } from '../i18n';
+
+/**
+ * Eticheta „în română” pentru conținutul care nu e (încă) tradus. Se pune în
+ * afara elementului cu lang="ro", ca eticheta însăși să fie în limba paginii.
+ */
+interface Props {
+  lang: Locale;
+  class?: string;
+}
+
+const { lang, class: extra = '' } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<span
+  class:list={['inline-flex items-center rounded-full bg-stone-100 px-2 py-0.5 text-xs font-medium text-stone-600', extra]}
+  lang={lang}
+>
+  {t('content.inRomanian')}
+</span>

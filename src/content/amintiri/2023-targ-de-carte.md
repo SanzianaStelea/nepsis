@@ -4,9 +4,9 @@ year: 2023
 date: 2023-06-01
 showDate: false
 images:
-  - src: /img/evenimente/2023-06-targ.jpg
+  - src: /img/amintiri/2023-targ-de-carte/01.jpg
     alt: "Afiș târg de carte Nepsis"
-  - src: /img/evenimente/2023-06-targ2.jpg
+  - src: /img/amintiri/2023-targ-de-carte/02.jpg
     alt: "Poză cu cărțile expuse în Lausanne"
 lang: ro
 translationKey: amintire-2023-targ

@@ -3,8 +3,10 @@ title: "Pelerinaj la cimitirul militar român de la Soultzmatt"
 year: 2024
 date: 2024-06-22
 images:
-  - src: /img/evenimente/2024_soultzmatt_grup.jpeg
+  - src: /img/amintiri/2024-soultzmatt/01.jpeg
     alt: "Poză de grup eveniment Soultzmatt"
+  - src: /img/amintiri/2024-soultzmatt/02.jpeg
+    alt: "Participanți printre crucile albe ale cimitirului militar românesc de la Soultzmatt"
 lang: ro
 translationKey: amintire-2024-soultzmatt
 ---

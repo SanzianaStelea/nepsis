@@ -3,9 +3,9 @@ title: "Vizită la Părintele Gabriel Bunge"
 year: 2022
 date: 2022-10-15
 images:
-  - src: /img/evenimente/2022-bunge-1.jpeg
+  - src: /img/amintiri/2022-vizita-bunge/01.jpeg
     alt: "Poză de grup cu Părintele Bunge"
-  - src: /img/evenimente/2022-bunge-2.jpeg
+  - src: /img/amintiri/2022-vizita-bunge/02.jpeg
     alt: "Părintele Bunge vorbește"
 lang: ro
 translationKey: amintire-2022-bunge

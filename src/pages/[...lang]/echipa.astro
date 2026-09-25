@@ -1,7 +1,16 @@
 ---
+import type { CollectionEntry } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import { langStaticPaths, localeFromParam, localePath, useTranslations, withBase, type UIKey } from '../../i18n';
+import {
+  langStaticPaths,
+  localeFromParam,
+  localePath,
+  localizePlace,
+  useTranslations,
+  type UIKey,
+} from '../../i18n';
 import { getMembers } from '../../lib/content';
+import { thumbUrl } from '../../lib/images';
 
 export function getStaticPaths() {
   return langStaticPaths();
@@ -10,55 +19,93 @@ export function getStaticPaths() {
 const lang = localeFromParam(Astro.params.lang);
 const t = useTranslations(lang);
 const members = await getMembers();
+
+type Member = CollectionEntry<'membri'>;
+// Coordonatorii și foștii coordonatori apar în ordine alfabetică, după prenume.
+const alfabetic = (a: Member, b: Member) => a.data.name.localeCompare(b.data.name, 'ro');
+const activi = members.filter((m) => m.data.status === 'activ');
+const sectiuni: { id: string; title: string; people: Member[] }[] = [
+  { id: 'responsabil', title: t('members.section.council'), people: activi.filter((m) => m.data.role === 'responsabil') },
+  {
+    id: 'coordonatorii',
+    title: t('members.section.coordinators'),
+    people: activi.filter((m) => m.data.role !== 'responsabil').sort(alfabetic),
+  },
+  { id: 'alumni', title: t('members.section.alumni'), people: members.filter((m) => m.data.status === 'alumni').sort(alfabetic) },
+];
+
+// Fără poză: un cerc cu inițialele primelor două cuvinte din nume (fără inițiale deja
+// prescurtate, ca „I.” din „Ștefan I.”).
+const initiale = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter((w) => w && !/^\p{L}\.$/u.test(w))
+    .slice(0, 2)
+    .map((w) => w[0]!.toLocaleUpperCase('ro'))
+    .join('');
+const numeAfisat = (m: Member) => (m.data.honorific ? `${t('members.priest')} ${m.data.name}` : m.data.name);
 ---
 
 <Base lang={lang} title={`${t('members.title')} · ${t('site.name')}`} description={t('members.description')}>
-  <div class="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-    <header class="text-center">
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:py-14">
+    <header>
       <h1 class="font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{t('members.heading')}</h1>
       <p class="mt-2 text-lg text-stone-600">{t('members.subtitle')}</p>
     </header>
 
-    <!--
-      Locul fotografiei rămâne rotund și rezervat chiar dacă deocamdată nimeni
-      n-are poză: când se adaugă un câmp `photo` în fișierul persoanei, imaginea
-      intră direct în cerc, fără altă modificare.
-    -->
-    <ul class="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
-      {
-        members.map((member) => (
-          <li class="text-center">
-            <img
-              src={withBase(member.data.photo ?? '/img/membri/placeholder.png')}
-              alt={member.data.photo ? member.data.name : t('members.missingPhoto')}
-              loading="lazy"
-              width="240"
-              height="240"
-              class="mx-auto aspect-square w-32 rounded-full border border-stone-200 object-cover shadow-sm sm:w-40"
-            />
-            <h2 class="mt-4 font-serif text-lg font-semibold text-brand-950">{member.data.name}</h2>
-            <p class="mt-0.5 text-sm font-medium text-brand-700">
-              {t(`members.role.${member.data.role}` as UIKey)}
-            </p>
-            {
-              member.data.parish && (
-                <p class="text-sm text-stone-500">
-                  {/*
-                    Părintele răspunde de frăție la nivel de țară, nu de o parohie,
-                    deci la el nu punem prefixul „Parohia”.
-                  */}
-                  {member.data.role === 'responsabil'
-                    ? member.data.parish
-                    : `${t('members.parish')} ${member.data.parish}`}
-                </p>
-              )
-            }
-          </li>
-        ))
-      }
-    </ul>
+    {
+      sectiuni.map((s) => (
+        <section aria-labelledby={`echipa-${s.id}`}>
+          <h2 id={`echipa-${s.id}`} class="mt-12 border-b border-stone-200 pb-2 text-2xl font-bold text-brand-950">
+            {s.title}
+          </h2>
+          {s.people.length === 0 ? (
+            <p class="mt-4 text-stone-600">{t('members.alumniEmpty')}</p>
+          ) : (
+            <ul class="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+              {s.people.map((m) => (
+                <li class="flex items-center gap-4">
+                  {m.data.photo ? (
+                    <img
+                      src={thumbUrl(m.data.photo, 480)}
+                      width="128"
+                      height="128"
+                      alt=""
+                      loading="lazy"
+                      class="h-16 w-16 shrink-0 rounded-full object-cover"
+                      style={m.data.photoPosition ? `object-position: ${m.data.photoPosition}` : undefined}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-100 font-serif text-2xl font-bold text-brand-800"
+                    >
+                      {initiale(m.data.name)}
+                    </span>
+                  )}
+                  <div>
+                    <h3 class="font-serif text-lg font-semibold text-brand-950">{numeAfisat(m)}</h3>
+                    {m.data.status !== 'alumni' && (
+                      <p class="text-sm font-medium text-brand-700">{t(`members.role.${m.data.role}` as UIKey)}</p>
+                    )}
+                    {m.data.parish && (
+                      <p class="text-sm text-stone-600">
+                        {t('members.parish')} {localizePlace(m.data.parish, lang)}
+                      </p>
+                    )}
+                    {m.data.status === 'alumni' && m.data.period && (
+                      <p class="text-sm text-stone-600">{m.data.period}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))
+    }
 
-    <p class="mt-14 text-center text-stone-600">
+    <p class="mt-14 text-stone-600">
       {t('members.more')}
       <a
         href={localePath(lang, '/amintiri/')}

@@ -47,6 +47,46 @@
 
 html {
   scroll-behavior: smooth;
+  /* Ancorele nu ajung sub bara fixă de sus. */
+  scroll-padding-top: 5rem;
+}
+
+/*
+ * Focus vizibil pe tot ce se poate accesa din tastatură: contur roșu închis,
+ * alb pe fundalurile închise (subsol, benzile `.on-dark`).
+ */
+:where(a, button, select, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-brand-700);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+footer :focus-visible,
+.on-dark :focus-visible {
+  outline-color: #fff;
+}
+
+/*
+ * Butoanele și legăturile-text ale site-ului, într-un singur loc — paginile
+ * folosesc aceste clase în loc de șiruri lungi de utilitare copiate peste tot.
+ * Trei niveluri: buton principal, buton secundar (contur) și legătură-text.
+ */
+@layer components {
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors;
+  }
+  .btn-primary {
+    @apply bg-brand-800 text-white hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-brand-800 bg-transparent text-brand-800 hover:bg-brand-50;
+  }
+  /* Pe benzile închise la culoare. */
+  .btn-on-dark {
+    @apply bg-white text-brand-900 hover:bg-brand-50;
+  }
+  .link-text {
+    @apply inline-flex min-h-11 items-center font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-900 hover:decoration-brand-700;
+  }
 }
 
 body {
@@ -118,11 +158,6 @@ h1, h2, h3, h4 {
 .prose-md .table-scroll,
 .prose-md > astro-island {
   overflow-x: auto;
-}
-
-/* E-mailul nu apare în HTML: e asamblat vizual din atributele data-* (anti-spam). */
-.email-protejat::after {
-  content: attr(data-x) '@' attr(data-y) '.' attr(data-z);
 }
 
 /*
@@ -220,44 +255,5 @@ h1, h2, h3, h4 {
 @media (prefers-reduced-motion: reduce) {
   .intro {
     display: none;
-  }
-}
-
-/*
- * Cronologia amintirilor: firul din stânga curge pe măsură ce derulezi, iar fișele
- * apar pe rând când intră în ecran.
- *
- * Clasa `cronologie--vie` o pune JavaScript-ul, și numai dacă nu s-a cerut mai
- * puțină mișcare: fără ea totul e vizibil din primul cadru, deci pagina nu depinde
- * de script ca să poată fi citită.
- */
-.cronologie {
-  --progres: 0%;
-}
-.cronologie__fir-plin {
-  height: var(--progres);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .cronologie--vie .amintire {
-    opacity: 0;
-    transform: translateY(1.25rem);
-    transition:
-      opacity 600ms ease-out,
-      transform 600ms cubic-bezier(0.22, 0.68, 0.3, 1);
-  }
-  .cronologie--vie .amintire.vazuta {
-    opacity: 1;
-    transform: none;
-  }
-  .cronologie--vie .punct {
-    opacity: 0.4;
-    transform: scale(0.6);
-    transition:
-      opacity 400ms ease-out,
-      transform 400ms cubic-bezier(0.22, 0.68, 0.3, 1);
-  }
-  .cronologie--vie .amintire.vazuta .punct {
-    opacity: 1;
-    transform: none;
   }
 }

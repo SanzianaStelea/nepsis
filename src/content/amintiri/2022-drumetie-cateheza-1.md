@@ -3,11 +3,11 @@ title: "Prima drumeție-cateheză cu Părintele Dionisie (1st hiking-catechesis 
 year: 2022
 date: 2022-06-06
 images:
-  - src: /img/evenimente/2022_drumetie1_1.jpeg
+  - src: /img/amintiri/2022-drumetie-cateheza-1/01.jpeg
     alt: "poze din drumeție - lacul"
-  - src: /img/evenimente/2022_drumetie1_2.jpeg
+  - src: /img/amintiri/2022-drumetie-cateheza-1/02.jpeg
     alt: "poze din drumeție - marele grup"
-  - src: /img/evenimente/2022_drumetie1_3.jpeg
+  - src: /img/amintiri/2022-drumetie-cateheza-1/03.jpeg
     alt: "poze din drumeție - predica"
 lang: ro
 translationKey: amintire-2022-drumetie-1

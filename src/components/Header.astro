@@ -12,34 +12,34 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const path = stripLocale(Astro.url.pathname);
 
-const items = [
-  { href: '/', label: t('nav.home') },
-  { href: '/evenimente/', label: t('nav.activities') },
-  { href: '/amintiri/', label: t('nav.memories') },
+/*
+ * „Acasă” nu mai are un punct propriu: logoul duce deja la prima pagină.
+ * Paginile despre frăție stau grupate sub „Despre noi”, ca meniul orizontal
+ * să încapă pe un singur rând de la 1280px în toate cele patru limbi.
+ */
+const despre = [
+  { href: '/despre/', label: t('nav.whoWeAre') },
   { href: '/ocrotitorul/', label: t('nav.patron') },
   { href: '/echipa/', label: t('nav.members') },
+];
+const items = [
+  { href: '/evenimente/', label: t('nav.activities') },
+  { href: '/amintiri/', label: t('nav.memories') },
   { href: '/psaltica/', label: t('nav.psaltica') },
   { href: '/contact/', label: t('nav.contact') },
 ];
 
-/*
- * Lățimea de care are nevoie meniul orizontal diferă mult de la o limbă la alta —
- * măsurat pe pagina de contact, cu etichetele nerupte: ro 1142px, fr 1236px,
- * de 1365px („Byzantinischer Gesang”, „Veranstaltungen”). Un prag unic ori taie
- * româna prea devreme, ori lasă germana să se reverse peste selectorul de limbă.
- * De aceea germana primește pragul următor. Clasele se scriu întregi, nu
- * compuse din bucăți, altfel Tailwind nu le-ar genera.
- */
-const navDesktop = lang === 'de' ? 'hidden items-center gap-0.5 2xl:flex' : 'hidden items-center gap-0.5 xl:flex';
-const actiuniDesktop = lang === 'de' ? 'hidden items-center gap-3 2xl:flex' : 'hidden items-center gap-3 xl:flex';
-const doarMobil = lang === 'de' ? '2xl:hidden' : 'xl:hidden';
+const isActive = (href: string) => path.startsWith(href.replace(/\/$/, ''));
+const despreActiv = despre.some((item) => isActive(item.href));
 
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href.replace(/\/$/, ''));
+const itemDesktop = 'inline-flex min-h-11 items-center gap-1 whitespace-nowrap rounded-md px-2.5 text-sm font-medium transition-colors';
+const activ = 'bg-brand-100 text-brand-900';
+const inactiv = 'text-stone-700 hover:bg-brand-50 hover:text-brand-900';
+const itemMobil = 'flex min-h-11 items-center rounded-md px-3 text-base font-medium';
 ---
 
 <header class="sticky top-0 z-40 border-b border-stone-200 bg-paper/95 backdrop-blur">
-  <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
+  <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2">
     <a href={localePath(lang, '/')} class="flex shrink-0 items-center gap-3">
       <Image
         src={logo}
@@ -52,18 +52,49 @@ const isActive = (href: string) =>
       <span class="font-serif text-lg font-semibold tracking-tight text-brand-900">{t('site.name')}</span>
     </a>
 
-    <nav class={navDesktop} aria-label={t('nav.menu')}>
+    <nav class="hidden items-center gap-0.5 xl:flex" aria-label={t('nav.menu')}>
+      <div class="relative" data-disclosure>
+        <button
+          type="button"
+          data-disclosure-button
+          aria-expanded="false"
+          aria-controls="submeniu-despre"
+          class:list={[itemDesktop, despreActiv ? activ : inactiv]}
+        >
+          {t('nav.about')}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 transition-transform" data-chevron fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <ul
+          id="submeniu-despre"
+          hidden
+          class="absolute left-0 top-full z-50 mt-1 w-56 rounded-lg border border-stone-200 bg-white py-1 shadow-lg"
+        >
+          {
+            despre.map((item) => (
+              <li>
+                <a
+                  href={localePath(lang, item.href)}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={[
+                    'block min-h-11 px-4 py-2.5 text-sm text-stone-700 hover:bg-brand-50 hover:text-brand-900',
+                    isActive(item.href) && 'bg-brand-100',
+                  ]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
       {
         items.map((item) => (
           <a
             href={localePath(lang, item.href)}
             aria-current={isActive(item.href) ? 'page' : undefined}
-            class:list={[
-              'whitespace-nowrap rounded-md px-2.5 py-2 text-sm font-medium transition-colors',
-              isActive(item.href)
-                ? 'bg-brand-100 text-brand-900'
-                : 'text-stone-700 hover:bg-brand-50 hover:text-brand-900',
-            ]}
+            class:list={[itemDesktop, isActive(item.href) ? activ : inactiv]}
           >
             {item.label}
           </a>
@@ -71,44 +102,55 @@ const isActive = (href: string) =>
       }
     </nav>
 
-    <div class={actiuniDesktop}>
-      <a
-        href={localePath(lang, '/devino-membru/')}
-        class="whitespace-nowrap rounded-lg bg-brand-800 px-3.5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-      >
+    <div class="flex items-center gap-2">
+      <a href={localePath(lang, '/devino-membru/')} class="btn btn-primary hidden whitespace-nowrap xl:inline-flex">
         {t('nav.join')}
       </a>
       <LangSwitcher lang={lang} />
+      <button
+        id="meniu-buton"
+        type="button"
+        class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-stone-300 text-stone-700 hover:bg-brand-50 xl:hidden"
+        aria-expanded="false"
+        aria-controls="meniu-mobil"
+        aria-label={t('nav.openMenu')}
+        data-open-label={t('nav.openMenu')}
+        data-close-label={t('nav.closeMenu')}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </div>
-
-    <button
-      id="meniu-buton"
-      type="button"
-      class:list={["rounded-md border border-stone-300 p-2 text-stone-700 hover:bg-brand-50", doarMobil]}
-      aria-expanded="false"
-      aria-controls="meniu-mobil"
-      aria-label={t('nav.openMenu')}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
-    </button>
   </div>
 
-  <nav id="meniu-mobil" class:list={["hidden border-t border-stone-200 px-4 pb-4", doarMobil]} aria-label={t('nav.menu')}>
+  <nav id="meniu-mobil" class="hidden border-t border-stone-200 px-4 pb-4 xl:hidden" aria-label={t('nav.menu')}>
     <ul class="flex flex-col py-2">
+      <li>
+        <p class="px-3 pt-2 text-xs font-semibold uppercase tracking-wide text-stone-500" aria-hidden="true">{t('nav.about')}</p>
+        <ul aria-label={t('nav.about')}>
+          {
+            despre.map((item) => (
+              <li>
+                <a
+                  href={localePath(lang, item.href)}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                  class:list={[itemMobil, 'pl-6', isActive(item.href) ? activ : inactiv]}
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
       {
         items.map((item) => (
           <li>
             <a
               href={localePath(lang, item.href)}
               aria-current={isActive(item.href) ? 'page' : undefined}
-              class:list={[
-                'block rounded-md px-3 py-2.5 text-base font-medium',
-                isActive(item.href)
-                  ? 'bg-brand-100 text-brand-900'
-                  : 'text-stone-700 hover:bg-brand-50 hover:text-brand-900',
-              ]}
+              class:list={[itemMobil, isActive(item.href) ? activ : inactiv]}
             >
               {item.label}
             </a>
@@ -116,23 +158,31 @@ const isActive = (href: string) =>
         ))
       }
     </ul>
-    <a
-      href={localePath(lang, '/devino-membru/')}
-      class="mb-3 block rounded-lg bg-brand-800 px-3.5 py-2.5 text-center text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-    >
+    <a href={localePath(lang, '/devino-membru/')} class="btn btn-primary mt-3 w-full">
       {t('nav.join')}
     </a>
-    <div class="border-t border-stone-200 pt-3">
-      <LangSwitcher lang={lang} />
-    </div>
   </nav>
 </header>
 
 <script>
+  import { initDisclosures } from '../lib/disclosure';
+
+  initDisclosures();
+
+  // Meniul mobil (sub 1280px).
   const buton = document.getElementById('meniu-buton');
   const meniu = document.getElementById('meniu-mobil');
-  buton?.addEventListener('click', () => {
-    const deschis = !meniu?.classList.toggle('hidden');
+  const seteaza = (deschis: boolean) => {
+    if (!buton || !meniu) return;
+    meniu.classList.toggle('hidden', !deschis);
     buton.setAttribute('aria-expanded', String(deschis));
+    const eticheta = deschis ? buton.dataset.closeLabel : buton.dataset.openLabel;
+    if (eticheta) buton.setAttribute('aria-label', eticheta);
+  };
+  buton?.addEventListener('click', () => seteaza(meniu?.classList.contains('hidden') ?? false));
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Escape' || !meniu || meniu.classList.contains('hidden')) return;
+    seteaza(false);
+    buton?.focus();
   });
 </script>

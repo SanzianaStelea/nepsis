@@ -3,9 +3,9 @@ title: "Pelerinaj la Părintele Gabriel Bunge"
 year: 2024
 date: 2024-10-05
 images:
-  - src: /img/evenimente/2024_pr.bunge_1.jpeg
+  - src: /img/amintiri/2024-pelerinaj-bunge/01.jpeg
     alt: "Poză de grup pelerinaj Gabriel Bunge"
-  - src: /img/evenimente/2024_ticino.jpeg
+  - src: /img/amintiri/2024-pelerinaj-bunge/02.jpeg
     alt: "Poză de grup parohia Ticino"
 lang: ro
 translationKey: amintire-2024-bunge

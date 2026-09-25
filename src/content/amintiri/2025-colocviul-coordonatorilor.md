@@ -3,16 +3,18 @@ title: "Colocviul Coordonatorilor Nepsis MOREOM"
 year: 2025
 date: 2025-05-29
 images:
-  - src: /img/evenimente/2025_team_buildings.jpg
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/01.jpg
     alt: "Poză Grup Team Building Belgia 2025"
-  - src: /img/evenimente/2025_team_buildings_2.jpg
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/02.jpg
     alt: "Poză Atelier Team Building Belgia 2025"
-  - src: /img/evenimente/2025_team_buildings_3.jpg
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/03.jpg
     alt: "Poză Atelier Team Building Belgia 2025 - 2"
-  - src: /img/evenimente/2025_team_buildings_5.jpg
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/04.jpg
     alt: "Poză Atelier Team Building Belgia 2025 - 4"
-  - src: /img/evenimente/2025_team_buildings_4.jpg
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/05.jpg
     alt: "Poză Atelier Team Building Belgia 2025 - 3"
+  - src: /img/amintiri/2025-colocviul-coordonatorilor/06.jpg
+    alt: "Flipchart cu bilețele adezive sub titlul „Scopul”, din atelierul coordonatorilor"
 lang: ro
 translationKey: amintire-2025-colocviu
 ---

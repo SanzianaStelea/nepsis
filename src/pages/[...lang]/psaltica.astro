@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import { langStaticPaths, localeFromParam, useTranslations } from '../../i18n';
+import { langStaticPaths, localeFromParam, useTranslations, type UIKey } from '../../i18n';
 import { getPage } from '../../lib/content';
 import psalticaLogo from '../../assets/nepsis_psaltica_logo.jpg';
 
@@ -12,6 +12,13 @@ export function getStaticPaths() {
 const lang = localeFromParam(Astro.params.lang);
 const t = useTranslations(lang);
 const { entry, Content } = await getPage('psaltica', lang);
+const { entry: materiale, Content: Materiale } = await getPage('psaltica-materiale', lang);
+
+const program = (['when', 'where', 'duration', 'who'] as const).map((k) => ({
+  label: t(`psaltica.${k}.label` as UIKey),
+  value: t(`psaltica.${k}` as UIKey),
+}));
+const titlu = 'text-2xl font-bold text-brand-950';
 ---
 
 <Base
@@ -20,70 +27,65 @@ const { entry, Content } = await getPage('psaltica', lang);
   description={entry.data.description ?? t('psaltica.description')}
   ogImage="/psaltica/img/nepsis_psaltica_logo.jpg"
 >
-  <div class="mx-auto max-w-6xl px-4 py-10 sm:py-14">
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:py-14">
     <h1 class="font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{t('psaltica.title')}</h1>
 
-    <div class="mt-10 gap-10 lg:grid lg:grid-cols-2">
-      <div>
-        <Image
-          src={psalticaLogo}
-          alt={t('psaltica.logoAlt')}
-          widths={[400, 700, 1000]}
-          sizes="(min-width: 640px) 28rem, 62vw"
-          format="webp"
-          quality={70}
-          fetchpriority="high"
-          decoding="async"
-          class="w-full max-w-md rounded-xl border border-stone-200 shadow-sm"
-        />
-        <div class="prose-md mt-8 text-stone-700">
-          <Content />
-        </div>
+    <div class="mt-6 grid gap-8 md:grid-cols-[1fr_14rem] md:items-start">
+      <div class="prose-md max-w-prose text-lg text-stone-700">
+        <Content />
       </div>
-      <div class="mt-12 lg:mt-0">
-        <h2 class="text-2xl font-bold text-brand-950">{t('psaltica.testimonials')}</h2>
-        <!-- Harta interactivă (ArcGIS) se încarcă abia la click, ca pagina să rămână rapidă. -->
-        <div
-          id="marturii-fatada"
-          class="mt-4 flex h-[500px] items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-brand-50 shadow-sm"
-          data-src="https://storymaps.arcgis.com/stories/e2f319110254454fad115d0c30b00d1f?cover=false"
-          data-title={t('psaltica.testimonials')}
-        >
-          <button
-            type="button"
-            class="rounded-lg bg-brand-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-          >
-            {t('psaltica.testimonials')} →
-          </button>
-        </div>
-        <noscript>
-          <p class="mt-3">
-            <a
-              href="https://storymaps.arcgis.com/stories/e2f319110254454fad115d0c30b00d1f"
-              target="_blank"
-              rel="noopener"
-              class="text-brand-700 underline"
-            >
-              {t('psaltica.testimonials')}
-            </a>
-          </p>
-        </noscript>
-      </div>
+      <Image
+        src={psalticaLogo}
+        alt={t('psaltica.logoAlt')}
+        widths={[160, 320, 448]}
+        sizes="(min-width: 768px) 14rem, 10rem"
+        format="webp"
+        quality={70}
+        fetchpriority="high"
+        decoding="async"
+        class="w-40 rounded-lg md:w-56"
+      />
     </div>
+
+    <section class="mt-12" aria-labelledby="program">
+      <h2 id="program" class={titlu}>{t('psaltica.scheduleTitle')}</h2>
+      <dl class="mt-4 grid gap-x-8 gap-y-4 border-y border-stone-200 py-6 sm:grid-cols-2">
+        {
+          program.map((p) => (
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-brand-700">{p.label}</dt>
+              <dd class="mt-1 text-stone-800">{p.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="mt-12" aria-labelledby="participa">
+      <h2 id="participa" class={titlu}>{t('psaltica.joinTitle')}</h2>
+      <p class="mt-3 max-w-prose text-stone-700">{t('psaltica.joinText')}</p>
+      <a class="btn btn-primary mt-4" href="mailto:nepsis.ch@mitropolia.eu">{t('join.cta')}</a>
+    </section>
+
+    <section class="mt-12" aria-labelledby="materiale">
+      <h2 id="materiale" class={titlu}>{materiale.data.title}</h2>
+      <div class="prose-md mt-4 text-stone-700">
+        <Materiale />
+      </div>
+    </section>
+
+    <!-- Arhiva mărturiilor din 2020 (hartă ArcGIS), doar ca legătură externă. -->
+    <section class="mt-12 border-t border-stone-200 pt-8" aria-labelledby="arhiva">
+      <h2 id="arhiva" class="text-xl font-bold text-brand-950">{t('psaltica.testimonials')}</h2>
+      <p class="mt-2 max-w-prose text-stone-600">{t('psaltica.archiveText')}</p>
+      <a
+        class="btn btn-secondary mt-4"
+        href="https://storymaps.arcgis.com/stories/e2f319110254454fad115d0c30b00d1f"
+        target="_blank"
+        rel="noopener"
+      >
+        {t('psaltica.archiveLink')}<span class="sr-only"> {t('common.newTab')}</span>
+      </a>
+    </section>
   </div>
 </Base>
-
-<script>
-  // Înlocuiește fațada cu iframe-ul ArcGIS abia la click.
-  const fatada = document.getElementById('marturii-fatada');
-  fatada?.querySelector('button')?.addEventListener('click', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = fatada.dataset.src ?? '';
-    iframe.title = fatada.dataset.title ?? '';
-    iframe.width = '100%';
-    iframe.height = '500';
-    iframe.allowFullscreen = true;
-    iframe.allow = 'geolocation';
-    fatada.replaceChildren(iframe);
-  });
-</script>

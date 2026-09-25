@@ -19,7 +19,7 @@ Acest ghid este scris pentru cineva care **nu știe programare**. Tot ce ai nevo
 title: "Drumeție Nepsis la Grindelwald"
 date: 2026-09-20
 location: "Grindelwald, canton Berna"
-image: /img/2026-drumetie-grindelwald.jpg
+image: /img/evenimente/2026-09-20-drumetie-grindelwald/afis.jpg
 imageAlt: "Afișul drumeției de la Grindelwald"
 registrationLink: https://forms.gle/exemplu
 lang: ro
@@ -56,9 +56,9 @@ title: "Drumeție la Grindelwald"
 year: 2026
 date: 2026-09-20
 images:
-  - src: /img/2026-drumetie-1.jpg
+  - src: /img/amintiri/2026-drumetie-grindelwald/01.jpg
     alt: "Poză de grup pe traseu"
-  - src: /img/2026-drumetie-2.jpg
+  - src: /img/amintiri/2026-drumetie-grindelwald/02.jpg
     alt: "Peisaj cu munții"
 lang: ro
 translationKey: amintire-2026-drumetie-grindelwald
@@ -81,16 +81,30 @@ Pe pagina **Evenimente** există o secțiune „Calendarul evenimentelor" — un
 
 ## Cum urc o poză
 
-1. Deschide folderul [`public/img/`](public/img/) pe GitHub.
-2. Apasă **Add file → Upload files**.
-3. Trage poza în fereastră și apasă **Commit changes**.
-4. Poza ta e acum disponibilă la calea `/img/numele-pozei.jpg` — exact ce scrii în câmpurile `image:` sau `src:` de mai sus.
+Pozele sunt ordonate **câte un folder pentru fiecare eveniment**, cu **același nume ca fișierul `.md`** al evenimentului sau al amintirii:
+
+```
+public/img/
+├── amintiri/<numele-amintirii>/     01.jpg, 02.jpg, … (+ afis.jpg, dacă există)
+├── evenimente/<numele-evenimentului>/  afis.jpg (sau afis-ro.jpg, afis-en.jpg)
+├── echipa/                          pozele membrilor: prenume.jpg
+├── site/                            sigle, iconița, steagul
+└── arhiva/                          afișe vechi care nu mai apar pe nicio pagină
+```
+
+Exemplu: amintirea `src/content/amintiri/2026-drumetie-grindelwald.md` își ține pozele în `public/img/amintiri/2026-drumetie-grindelwald/`.
+
+1. Pe calculator, pune pozele într-un folder cu numele amintirii și redenumește-le `01.jpg`, `02.jpg`, … în ordinea în care vrei să apară. **Prima poză (`01`) e coperta**: apare pe cardul amintirii și pe prima pagină.
+2. Deschide pe GitHub folderul [`public/img/amintiri/`](public/img/amintiri/).
+3. Apasă **Add file → Upload files**, trage **tot folderul** în fereastră și apasă **Commit changes**.
+4. În fișierul `.md` scrii căile: `/img/amintiri/2026-drumetie-grindelwald/01.jpg`, `…/02.jpg` etc.
 
 Sfaturi:
 
-- Folosește nume simple, fără spații și fără diacritice: `2026-hram-poza-grup.jpg`, nu `Poză de grup (hram).jpg`.
-- Pozele de la telefon pot fi mari; dacă poți, micșorează-le înainte (o lățime de ~1600 pixeli e suficientă) ca site-ul să rămână rapid.
-- Pozele membrilor merg în `public/img/membri/`.
+- Nume simple: litere mici, fără spații și fără diacritice.
+- Afișul unui eveniment se cheamă `afis.jpg`. Dacă ai afișe diferite pe limbi: `afis-ro.jpg`, `afis-en.jpg`.
+- Pozele de la telefon pot fi mari; dacă poți, micșorează-le înainte (o lățime de ~2000 pixeli e suficientă). Oricum, site-ul arată vizitatorilor variante micșorate, generate automat.
+- Pozele membrilor merg în `public/img/echipa/`, cu numele fișierului membrului (ex. `octavian.jpg` pentru `membri/octavian.md`).
 
 ## Cum modific un text existent
 

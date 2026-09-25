@@ -23,26 +23,9 @@ const { entry, Content } = await getPage('devino-membru', lang);
       <Content />
     </div>
     <p class="mt-10">
-      <!-- Butonul asamblează adresa la click — nu există „mailto:” în clar în HTML. -->
-      <a
-        href="#"
-        class="email-protejat-buton inline-block rounded-lg bg-brand-800 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-        data-x="nepsis.ch"
-        data-y="mitropolia"
-        data-z="eu"
-      >
+      <a href="mailto:nepsis.ch@mitropolia.eu" class="btn btn-primary">
         {t('join.cta')} →
       </a>
     </p>
   </div>
 </Base>
-
-<script>
-  document.querySelectorAll<HTMLAnchorElement>('.email-protejat-buton').forEach((el) => {
-    el.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      const { x, y, z } = el.dataset;
-      window.location.href = `mailto:${x}@${y}.${z}`;
-    });
-  });
-</script>

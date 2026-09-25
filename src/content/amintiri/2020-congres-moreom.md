@@ -3,7 +3,7 @@ title: "Congresul Internațional NEPSIS MOREOM 2020 - Berna"
 year: 2020
 date: 2020-09-25
 images:
-  - src: /img/2020_congres.gif
+  - src: /img/amintiri/2020-congres-moreom/01.gif
     alt: "Animatie poze congres NEPSIS MOREOM 2020"
 lang: ro
 translationKey: amintire-2020-congres

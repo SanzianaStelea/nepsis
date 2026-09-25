@@ -15,12 +15,21 @@ year: 2026
 # Data exactă, în formatul AN-LUNĂ-ZI (opțional, dar ajută la ordonare):
 date: 2026-05-17
 
-# Pozele amintirii (poți pune oricâte; încarcă-le întâi în public/img/).
+# Locul (opțional), afișat lângă dată — de ex. „Geneva” sau „Lauterbrunnen”.
+# Scrie-l doar dacă îl știi sigur; altfel șterge linia.
+location: "Geneva"
+
+# Ce mai lipsește (opțional): text, photos și/sau translation.
+# Nu apare pe site — e doar o listă de lucru, afișată ca avertisment la build
+# („[amintiri] lipsește: …”). Șterge linia când amintirea e completă.
+missing: [photos]
+
+# Pozele amintirii (poți pune oricâte; încarcă-le întâi în public/img/amintiri/<numele-acestui-fișier>/, numite 01.jpg, 02.jpg…; prima e coperta).
 # Pentru fiecare poză scrie calea și o scurtă descriere:
 images:
-  - src: /img/poza-unu.jpg
+  - src: /img/amintiri/2026-exemplu/01.jpg
     alt: "Descrierea primei poze"
-  - src: /img/poza-doi.jpg
+  - src: /img/amintiri/2026-exemplu/02.jpg
     alt: "Descrierea celei de-a doua poze"
 
 # Limba textului: ro, fr, en sau de

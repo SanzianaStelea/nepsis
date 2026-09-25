@@ -3,7 +3,7 @@ title: "Priveghere la Berna de Sf. Siluan"
 year: 2021
 date: 2021-09-23
 images:
-  - src: /img/2021-09-priveghere.jpg
+  - src: /img/amintiri/2021-priveghere-berna-sf-siluan/01.jpg
     alt: "Poza de grup la privegherea de la Berna 2021"
 lang: ro
 translationKey: amintire-2021-priveghere-berna

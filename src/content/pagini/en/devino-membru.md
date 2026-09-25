@@ -13,7 +13,7 @@ Have a look at the [events page](/en/evenimente/) to see what is coming up, or a
 
 ## Keep in touch with us
 
-- **Write us an e-mail** at <a href="#" class="email-protejat" data-x="nepsis.ch" data-y="mitropolia" data-z="eu"><span class="sr-only">E-mail</span></a> and tell us a few words about yourself. We will add you to our internal **WhatsApp** groups, where all activities are announced.
+- **Write us an e-mail** at [nepsis.ch@mitropolia.eu](mailto:nepsis.ch@mitropolia.eu) and tell us a few words about yourself. We will add you to our internal **WhatsApp** groups, where all activities are announced.
 - [Subscribe to the newsletter](/en/newsletter/) to receive the important news by e-mail.
 - Follow us on social media; the links are at the bottom of the page.
 

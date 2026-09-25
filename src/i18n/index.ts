@@ -94,3 +94,16 @@ export function formatDate(date: Date, locale: Locale): string {
     timeZone: 'UTC',
   }).format(date);
 }
+
+/**
+ * Numele localităților care se scriu altfel de la o limbă la alta
+ * (ex. „Geneva” → „Genève” / „Genf”). Celelalte rămân neschimbate.
+ */
+const places: Record<string, Partial<Record<Locale, string>>> = {
+  Geneva: { fr: 'Genève', en: 'Geneva', de: 'Genf' },
+  Zurich: { ro: 'Zürich', fr: 'Zurich', en: 'Zurich', de: 'Zürich' },
+};
+
+export function localizePlace(name: string, locale: Locale): string {
+  return places[name]?.[locale] ?? name;
+}

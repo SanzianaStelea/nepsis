@@ -1,14 +1,15 @@
 ---
-title: "Vizită la Geneva (cu prezența Înaltpreasfințitului Mitropolit Iosif)"
+title: "Vizită la Geneva și cateheză cu ÎPS Mitropolit Iosif"
 year: 2025
 date: 2025-11-02
 images:
-  - src: /img/2025-nov-Geneva1.jpeg
-    alt: "Vizită Geneva 2025 cu ÎPS Iosif"
-  - src: /img/2025-nov-Geneva2.jpeg
-    alt: "Vizită Geneva 2025 cu ÎPS Iosif - 2"
-  - src: /img/2025-nov-Geneva3.jpeg
-    alt: "Vizită Geneva 2025 cu ÎPS Iosif - 3"
+  - src: /img/amintiri/2025-vizita-geneva/01.jpeg
+    alt: "Vizita ÎPS Iosif la Geneva, 2 noiembrie 2025 — fotografia 1"
+  - src: /img/amintiri/2025-vizita-geneva/02.jpeg
+    alt: "Vizita ÎPS Iosif la Geneva, 2 noiembrie 2025 — fotografia 2"
+  - src: /img/amintiri/2025-vizita-geneva/03.jpeg
+    alt: "Vizita ÎPS Iosif la Geneva, 2 noiembrie 2025 — fotografia 3"
+location: "Geneva"
 lang: ro
 translationKey: amintire-2025-geneva
 ---

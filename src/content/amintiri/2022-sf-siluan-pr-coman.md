@@ -3,9 +3,9 @@ title: "Priveghere pentru Sfântul Siluan, Conferință cu Pr. Constantin Coman,
 year: 2022
 date: 2022-09-23
 images:
-  - src: /img/evenimente/2022-10-pr-coman.jpeg
+  - src: /img/amintiri/2022-sf-siluan-pr-coman/01.jpeg
     alt: "Părintele Coman"
-  - src: /img/evenimente/2022-10-pr-coman2.jpeg
+  - src: /img/amintiri/2022-sf-siluan-pr-coman/02.jpeg
     alt: "Poză de grup cu Părintele Coman"
 lang: ro
 translationKey: amintire-2022-sf-siluan

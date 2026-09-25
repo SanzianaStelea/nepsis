@@ -1,0 +1,166 @@
+---
+import Base from '../../../layouts/Base.astro';
+import MemoriesTabs from '../../../components/MemoriesTabs.astro';
+import Lightbox from '../../../components/Lightbox.astro';
+import { langStaticPaths, localeFromParam, localePath, useTranslations, defaultLocale } from '../../../i18n';
+import { getMemoriesByYear } from '../../../lib/content';
+import { thumbSrcset, thumbUrl } from '../../../lib/images';
+
+export function getStaticPaths() {
+  return langStaticPaths();
+}
+
+const lang = localeFromParam(Astro.params.lang);
+const t = useTranslations(lang);
+
+// Toate pozele din amintiri: anii cei mai noi primii, apoi amintirile după dată,
+// apoi pozele în ordinea din fișier.
+const years = await getMemoriesByYear(lang);
+const cuPoze = years.flatMap(({ year, entries }) =>
+  entries.filter(({ memory }) => memory.data.images.length > 0).map((e) => ({ ...e, year })),
+);
+const poze = cuPoze.flatMap(({ memory, slug, fallback, year }) =>
+  memory.data.images.map((img) => ({ ...img, memory, slug, fallback, year })),
+);
+const aniCuPoze = [...new Set(cuPoze.map((e) => e.year))];
+const numar = (n: number) => (n === 1 ? t('gallery.countOne') : t('gallery.countMany').replace('{n}', String(n)));
+
+const chip =
+  'inline-flex min-h-11 items-center rounded-full border border-brand-200 px-4 text-sm font-semibold text-brand-800 hover:bg-brand-50 aria-pressed:border-brand-800 aria-pressed:bg-brand-800 aria-pressed:text-white aria-pressed:hover:bg-brand-700';
+---
+
+<Base
+  lang={lang}
+  title={`${t('memories.tabGallery')} · ${t('memories.title')} · ${t('site.name')}`}
+  description={t('gallery.description')}
+>
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:py-14" data-galerie>
+    <h1 class="font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{t('memories.title')}</h1>
+    <p class="mt-3 max-w-prose text-lg text-stone-600">{t('memories.intro')}</p>
+    {lang !== defaultLocale && <p class="mt-2 text-sm italic text-stone-500">{t('memories.onlyRo')}</p>}
+
+    <MemoriesTabs lang={lang} current="gallery" />
+
+    <p class="mt-6 max-w-prose text-stone-700">{t('gallery.intro')}</p>
+
+    <!-- Filtrele apar doar cu JavaScript; fără el se vede toată galeria. -->
+    <div
+      data-filtre
+      hidden
+      data-count-one={t('gallery.countOne')}
+      data-count-many={t('gallery.countMany')}
+      class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+    >
+      <div class="flex flex-col gap-4">
+        <div role="group" aria-label={t('gallery.filterYear')} class="flex flex-wrap gap-2">
+          <button type="button" data-an="" aria-pressed="true" class={chip}>{t('gallery.allYears')}</button>
+          {
+            aniCuPoze.map((an) => (
+              <button type="button" data-an={String(an)} aria-pressed="false" class={chip}>
+                {an}
+              </button>
+            ))
+          }
+        </div>
+        <label class="flex flex-col gap-1 text-sm font-semibold text-stone-700">
+          {t('gallery.event')}
+          <select class="min-h-11 rounded-md border border-stone-300 bg-white px-3 text-base font-normal sm:max-w-md">
+            <option value="">{t('gallery.allEvents')}</option>
+            {
+              cuPoze.map(({ memory, slug, year, fallback }) => (
+                <option value={slug} data-year={String(year)} lang={fallback ? 'ro' : undefined}>
+                  {memory.data.title} ({year})
+                </option>
+              ))
+            }
+          </select>
+        </label>
+      </div>
+      <p aria-live="polite" class="text-sm text-stone-600" data-numar>{numar(poze.length)}</p>
+    </div>
+
+    <ul data-lightbox-group class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      {
+        poze.map((p) => (
+          <li data-year={String(p.year)} data-memory={p.slug} lang={p.fallback ? 'ro' : undefined}>
+            <figure>
+              <a
+                data-lightbox-item
+                href={thumbUrl(p.src, 1600)}
+                data-srcset={thumbSrcset(p.src, [960, 1600])}
+                data-caption={p.memory.data.title}
+                data-memory-href={localePath(lang, `/amintiri/${p.slug}/`)}
+                data-lang={p.memory.data.lang}
+                class="block overflow-hidden rounded-lg"
+              >
+                <img
+                  src={thumbUrl(p.src, 480)}
+                  srcset={thumbSrcset(p.src, [480, 960])}
+                  sizes="(min-width:1024px) 23vw, (min-width:640px) 31vw, 48vw"
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                  decoding="async"
+                  alt={p.alt}
+                  class="aspect-[4/3] w-full object-cover transition-transform hover:scale-[1.02]"
+                />
+              </a>
+              <figcaption class="mt-1 line-clamp-1 text-xs text-stone-600">{p.memory.data.title}</figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+  <Lightbox lang={lang} />
+</Base>
+
+<script>
+  const filtre = document.querySelector<HTMLElement>('[data-filtre]');
+  const grila = document.querySelector<HTMLElement>('[data-galerie] [data-lightbox-group]');
+  if (filtre && grila) {
+    filtre.hidden = false;
+    const butoane = [...filtre.querySelectorAll<HTMLButtonElement>('button[data-an]')];
+    const select = filtre.querySelector<HTMLSelectElement>('select');
+    const numar = filtre.querySelector<HTMLElement>('[data-numar]');
+    const poze = [...grila.querySelectorAll<HTMLLIElement>(':scope > li')];
+    let an = '';
+    let amintire = '';
+
+    const aplica = () => {
+      let n = 0;
+      for (const li of poze) {
+        const vizibil = (!an || li.dataset.year === an) && (!amintire || li.dataset.memory === amintire);
+        li.hidden = !vizibil;
+        if (vizibil) n++;
+      }
+      if (numar) {
+        numar.textContent =
+          n === 1 ? (filtre.dataset.countOne ?? '') : (filtre.dataset.countMany ?? '').replace('{n}', String(n));
+      }
+    };
+
+    butoane.forEach((b) =>
+      b.addEventListener('click', () => {
+        an = b.dataset.an ?? '';
+        butoane.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+        // Lista de evenimente arată doar anul ales și revine la „toate”.
+        if (select) {
+          for (const opt of select.options) {
+            if (!opt.value) continue;
+            const ascuns = !!an && opt.dataset.year !== an;
+            opt.hidden = ascuns;
+            opt.disabled = ascuns;
+          }
+          select.value = '';
+        }
+        amintire = '';
+        aplica();
+      }),
+    );
+    select?.addEventListener('change', () => {
+      amintire = select.value;
+      aplica();
+    });
+  }
+</script>

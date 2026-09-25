@@ -2,9 +2,9 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import EventCard from '../../components/EventCard.astro';
-import GalleryMarquee from '../../components/GalleryMarquee.astro';
-import { langStaticPaths, localeFromParam, localePath, useTranslations } from '../../i18n';
-import { getEvents, splitEvents, getPage, getMemoriesByYear } from '../../lib/content';
+import MemoryCard from '../../components/MemoryCard.astro';
+import { langStaticPaths, localeFromParam, localePath, useTranslations, type UIKey } from '../../i18n';
+import { getEvents, splitEvents, getMemoriesByYear, rezumatText } from '../../lib/content';
 import colaj from '../../assets/nepsis-elvetia.jpg';
 import stema from '../../assets/stema-mitropolia-color.png';
 
@@ -17,18 +17,18 @@ const t = useTranslations(lang);
 
 const { upcoming } = splitEvents(await getEvents(lang));
 
-const { Content: Despre } = await getPage('despre', lang);
-
-// Caruselul de pe prima pagină: prima fotografie a fiecărei amintiri, cele mai noi primele.
-const carouselImages = (await getMemoriesByYear(lang))
+// Ultimele trei amintiri care au măcar o fotografie.
+const amintiriRecente = (await getMemoriesByYear(lang))
   .flatMap(({ entries }) => entries)
   .filter(({ memory }) => memory.data.images.length > 0)
-  .map(({ memory, slug }) => ({
-    src: memory.data.images[0]!.src,
-    alt: memory.data.images[0]!.alt,
-    href: localePath(lang, `/amintiri/${slug}/`),
-    caption: memory.data.title,
-  }));
+  .slice(0, 3);
+
+const ceFacem = [1, 2, 3].map((n) => ({
+  title: t(`home.whatWeDo.${n}.title` as UIKey),
+  text: t(`home.whatWeDo.${n}.text` as UIKey),
+}));
+
+const titluSectiune = 'text-2xl font-bold text-brand-950 sm:text-3xl';
 ---
 
 <Base lang={lang} title={t('site.name')} description={t('site.description')}>
@@ -51,33 +51,20 @@ const carouselImages = (await getMemoriesByYear(lang))
   </div>
 
   <!-- Hero: elementele urcă pe rând, în spatele voalului -->
-  <section class="border-b border-stone-200 bg-white">
-    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-12 sm:py-16 md:grid-cols-2">
+  <section class="bg-white">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 py-10 sm:py-14 md:grid-cols-2">
       <div>
-        <p class="urca urca-1 text-sm font-semibold uppercase tracking-widest text-brand-600">
-          {t('home.eyebrow')}
-        </p>
-        <h1 class="urca urca-2 mt-3 font-serif text-4xl font-bold leading-tight text-brand-950 sm:text-5xl">
-          {t('site.name')}
+        <h1 class="urca urca-2 font-serif text-4xl font-bold leading-tight text-brand-950 sm:text-5xl">
+          {t('site.name')}<span class="sr-only"> — </span><span class="mt-2 block text-2xl font-normal leading-snug text-brand-900 sm:text-3xl">{t('home.heroTitle')}</span>
         </h1>
-        <div class="urca urca-3 mt-8 flex flex-wrap gap-3">
-          <a
-            href={localePath(lang, '/evenimente/')}
-            class="rounded-lg border border-brand-300 bg-white px-5 py-3 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-50"
-          >
-            {t('home.nextEvent')}
+        <p class="urca urca-3 mt-5 max-w-prose text-lg text-stone-700">{t('home.heroText')}</p>
+        <p class="mt-3 font-semibold text-brand-800">{t('home.ageRange')}</p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+          <a href={localePath(lang, '/evenimente/')} class="btn btn-primary w-full sm:w-auto">
+            {t('home.ctaNextEvent')}
           </a>
-          <a
-            href={localePath(lang, '/devino-membru/')}
-            class="rounded-lg bg-brand-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-          >
+          <a href={localePath(lang, '/devino-membru/')} class="btn btn-secondary w-full sm:w-auto">
             {t('nav.join')}
-          </a>
-          <a
-            href={localePath(lang, '/contact/')}
-            class="rounded-lg border border-brand-300 bg-white px-5 py-3 text-sm font-semibold text-brand-800 transition-colors hover:bg-brand-50"
-          >
-            {t('nav.contact')}
           </a>
         </div>
       </div>
@@ -91,14 +78,95 @@ const carouselImages = (await getMemoriesByYear(lang))
         loading="eager"
         fetchpriority="high"
         decoding="async"
-        class="w-full rounded-xl border border-stone-200 shadow-md"
+        class="w-full rounded-xl"
       />
     </div>
   </section>
 
+  <!-- Următorul eveniment -->
+  <section id="urmatorul-eveniment" class="bg-paper" aria-labelledby="urmatorul-eveniment-titlu">
+    <div class="mx-auto max-w-5xl px-4 py-12 sm:py-16">
+      <h2 id="urmatorul-eveniment-titlu" class={titluSectiune}>{t('home.nextEvent')}</h2>
+      {
+        upcoming[0] ? (
+          <>
+            <div class="mt-6">
+              <EventCard event={upcoming[0]} lang={lang} variant="summary" headingLevel="h3" />
+            </div>
+            <p class="mt-4">
+              <a href={localePath(lang, '/evenimente/')} class="link-text">{t('home.allActivities')} →</a>
+            </p>
+          </>
+        ) : (
+          <>
+            <p class="mt-4 max-w-prose text-stone-700">{t('home.noUpcoming')}</p>
+            <p class="mt-6">
+              <a href={localePath(lang, '/newsletter/')} class="btn btn-secondary">{t('contact.newsletterLink')}</a>
+            </p>
+          </>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Ce facem -->
+  <section class="bg-white" aria-labelledby="ce-facem">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <h2 id="ce-facem" class={titluSectiune}>{t('home.whatWeDo.title')}</h2>
+      <ul class="mt-8 grid gap-8 md:grid-cols-3">
+        {
+          ceFacem.map((item) => (
+            <li class="border-t-2 border-brand-200 pt-4">
+              <h3 class="text-lg font-semibold text-brand-900">{item.title}</h3>
+              <p class="mt-2 text-stone-700">{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6">
+        <a href={localePath(lang, '/despre/')} class="link-text">{t('home.whatWeDo.link')} →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Amintiri recente -->
+  <section class="bg-paper" aria-labelledby="amintiri-recente">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:py-16">
+      <h2 id="amintiri-recente" class={titluSectiune}>{t('home.recentMemories')}</h2>
+      <div class="mt-8 grid gap-8 md:grid-cols-3">
+        {
+          amintiriRecente.map(({ memory, slug, fallback }) => (
+            <MemoryCard
+              memory={memory}
+              lang={lang}
+              href={localePath(lang, `/amintiri/${slug}/`)}
+              rezumat={rezumatText(memory.body, 180)}
+              fallback={fallback}
+              headingLevel="h3"
+            />
+          ))
+        }
+      </div>
+      <p class="mt-6">
+        <a href={localePath(lang, '/amintiri/')} class="link-text">{t('home.seeMemories')} →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Invitație: devino membru -->
+  <section class="on-dark bg-brand-900 text-white" aria-labelledby="alatura-te">
+    <div class="mx-auto flex max-w-5xl flex-col gap-5 px-4 py-12 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 id="alatura-te" class="font-serif text-2xl font-bold text-white">{t('contact.joinTitle')}</h2>
+        <p class="mt-1 text-brand-100">{t('contact.joinText')}</p>
+      </div>
+      <a href={localePath(lang, '/devino-membru/')} class="btn btn-on-dark shrink-0">{t('nav.join')}</a>
+    </div>
+  </section>
+
   <!-- Apartenența la Mitropolie -->
-  <section class="border-b border-stone-200 bg-brand-50" aria-labelledby="moreom-titlu">
-    <div class="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 py-12 text-center sm:flex-row sm:gap-10 sm:text-left">
+  <section class="bg-brand-50" aria-labelledby="moreom-titlu">
+    <div class="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 py-10 text-center sm:flex-row sm:text-left">
       <Image
         src={stema}
         alt={t('home.moreomAlt')}
@@ -106,76 +174,11 @@ const carouselImages = (await getMemoriesByYear(lang))
         height="311"
         format="webp"
         loading="lazy"
-        class="h-36 w-auto shrink-0 sm:h-44"
+        class="h-24 w-auto shrink-0 sm:h-28"
       />
-      <h2 id="moreom-titlu" class="font-serif text-2xl font-bold leading-snug text-brand-950 sm:text-3xl">
+      <h2 id="moreom-titlu" class="font-serif text-xl font-bold leading-snug text-brand-950 sm:text-2xl">
         {t('home.moreomTitle')}
       </h2>
-    </div>
-  </section>
-
-  <!-- Următorul eveniment, prezentat central -->
-  <section class="mx-auto max-w-4xl px-4 py-12 text-center sm:py-16" aria-labelledby="eveniment-evidentiat">
-    <h2 id="eveniment-evidentiat" class="text-2xl font-bold uppercase tracking-wide text-brand-950 sm:text-3xl">
-      {t('home.nextEvent')}
-    </h2>
-    {
-      upcoming[0] && (
-        <div class="mt-6 text-left">
-          <EventCard event={upcoming[0]} lang={lang} detailed headingLevel="h3" />
-        </div>
-      )
-    }
-    <p class="mt-8">
-      <a
-        href={localePath(lang, '/evenimente/')}
-        class="inline-block rounded-full bg-brand-700 px-7 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800"
-      >
-        {t('home.allActivities')} →
-      </a>
-    </p>
-    {upcoming.length === 0 && <p class="mx-auto mt-6 max-w-prose text-stone-600">{t('home.noUpcoming')}</p>}
-  </section>
-
-  <!-- Bandă de imagini pe toată lățimea, cu momente din toate evenimentele -->
-  <section class="border-t border-stone-200 bg-white py-12 sm:py-16" aria-label={t('carousel.label')}>
-    <GalleryMarquee images={carouselImages} lang={lang} />
-    <p class="mt-8 text-center">
-      <a
-        href={localePath(lang, '/amintiri/')}
-        class="inline-block rounded-full bg-brand-700 px-7 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800"
-      >
-        {t('home.seeMemories')} →
-      </a>
-    </p>
-  </section>
-
-  <!-- Despre -->
-  <section class="border-t border-stone-200 bg-white" aria-labelledby="despre-titlu">
-    <div class="mx-auto max-w-3xl px-4 py-12 text-center sm:py-16">
-      <h2 id="despre-titlu" class="text-2xl font-bold text-brand-950 sm:text-3xl">
-        {t('home.about.title')}
-      </h2>
-      {/*
-        Intervalul de vârstă e informația pe care o caută cineva care se
-        întreabă dacă frăția i se adresează. De aceea stă separat, deasupra
-        textului, nu îngropat în el.
-      */}
-      <p class="mx-auto mt-4 max-w-prose text-lg font-semibold text-brand-700">
-        {t('home.ageRange')}
-      </p>
-      <div class="prose-md mt-6 text-left text-stone-700 sm:text-center">
-        <Despre />
-      </div>
-      <p class="mt-8 text-stone-600">
-        {t('home.moreAbout')}
-        <a
-          href={localePath(lang, '/amintiri/')}
-          class="font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-900"
-        >
-          {t('home.moreAboutLink')}
-        </a>
-      </p>
     </div>
   </section>
 </Base>

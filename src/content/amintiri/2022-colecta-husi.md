@@ -3,7 +3,7 @@ title: "Colectă pentru Huși"
 year: 2022
 date: 2022-01-15
 images:
-  - src: /img/2022_colecta_saci.jpg
+  - src: /img/amintiri/2022-colecta-husi/01.jpg
     alt: "Poza colecta Nepsis 2022 pentru Husi"
 lang: ro
 translationKey: amintire-2022-colecta

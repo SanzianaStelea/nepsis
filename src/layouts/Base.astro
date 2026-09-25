@@ -14,7 +14,7 @@ interface Props {
   ogImage?: string;
 }
 
-const { lang, title, description, ogImage = '/img/logo-small.jpg' } = Astro.props;
+const { lang, title, description, ogImage = '/img/site/logo-small.jpg' } = Astro.props;
 const t = useTranslations(lang);
 const pathNoLocale = stripLocale(Astro.url.pathname);
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -81,16 +81,5 @@ const ogLocales: Record<Locale, string> = { ro: 'ro_RO', fr: 'fr_CH', en: 'en_GB
       <slot />
     </main>
     <Footer lang={lang} />
-    <script>
-      // Asamblează adresele de e-mail protejate abia la click (anti-spam):
-      // adresa nu apare nicăieri în HTML în clar.
-      document.addEventListener('click', (ev) => {
-        const el = (ev.target as HTMLElement | null)?.closest<HTMLAnchorElement>('a.email-protejat');
-        if (!el) return;
-        ev.preventDefault();
-        const { x, y, z } = el.dataset;
-        window.location.href = `mailto:${x}@${y}.${z}`;
-      });
-    </script>
   </body>
 </html>

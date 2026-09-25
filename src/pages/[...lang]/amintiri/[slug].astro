@@ -1,7 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import Carousel from '../../../components/Carousel.astro';
+import Lightbox from '../../../components/Lightbox.astro';
 import {
   locales,
   defaultLocale,
@@ -12,6 +12,7 @@ import {
   type Locale,
 } from '../../../i18n';
 import { groupByTranslationKey, canonicalOf, localizedOf } from '../../../lib/content';
+import { imageSize, thumbSrcset, thumbUrl } from '../../../lib/images';
 
 // O pagină per amintire, în fiecare limbă (cu fallback pe română pentru text).
 // Slug-ul este numele fișierului variantei românești — identic în toate limbile.
@@ -39,6 +40,10 @@ const lang = localeFromParam(Astro.params.lang);
 const t = useTranslations(lang);
 const { Content } = await render(memory);
 const images = memory.data.images;
+// Amintirea netradusă se afișează în română, cu o notă în limba paginii.
+const fallback = memory.data.lang !== lang;
+const singura = images.length === 1 ? { ...images[0]!, ...(await imageSize(images[0]!.src)) } : undefined;
+const { date, showDate, location } = memory.data;
 
 // Meta description: primul rând de text, fără marcaje Markdown/HTML.
 const description =
@@ -59,34 +64,98 @@ const description =
 >
   <article class="mx-auto max-w-3xl px-4 py-10 sm:py-14">
     <nav>
-      <a
-        href={localePath(lang, `/amintiri/#an${memory.data.year}`)}
-        class="text-sm font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:text-brand-900"
-      >
+      <a href={localePath(lang, `/amintiri/#an${memory.data.year}`)} class="link-text text-sm">
         ← {t('memories.back')}
       </a>
     </nav>
 
-    <header class="mt-6">
-      <p class="text-sm font-semibold uppercase tracking-widest text-brand-600">
-        {t('memories.year')} {memory.data.year}
-      </p>
-      <h1 class="mt-2 font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{memory.data.title}</h1>
-      {
-        memory.data.date && memory.data.showDate && (
-          <p class="mt-2 text-stone-500">
-            <time datetime={memory.data.date.toISOString().slice(0, 10)}>
-              {formatDate(memory.data.date, lang)}
-            </time>
-          </p>
-        )
-      }
-    </header>
+    {fallback && <p class="mt-6 rounded-md bg-stone-100 px-4 py-3 text-sm text-stone-700">{t('content.fallbackNotice')}</p>}
 
-    <div class="prose-md mt-8 text-stone-700">
-      <Content />
+    <div lang={fallback ? 'ro' : undefined}>
+      <header class="mt-6">
+        <p class="text-sm font-semibold uppercase tracking-widest text-brand-600" lang={lang}>
+          {t('memories.year')} {memory.data.year}
+        </p>
+        <h1 class="mt-2 font-serif text-3xl font-bold text-brand-950 sm:text-4xl">{memory.data.title}</h1>
+        {
+          ((date && showDate) || location) && (
+            <p class="mt-2 text-stone-600">
+              {date && showDate && (
+                <time datetime={date.toISOString().slice(0, 10)} lang={lang}>
+                  {formatDate(date, lang)}
+                </time>
+              )}
+              {date && showDate && location && ' · '}
+              {location}
+            </p>
+          )
+        }
+      </header>
+
+      <div class="prose-md mt-8 text-stone-700">
+        <Content />
+      </div>
     </div>
 
-    <Carousel images={images} lang={lang} class="mt-10" />
+    {/* Pozele: una singură se vede întreagă; mai multe, ca grilă de miniaturi care se deschid mărite. */}
+    {
+      singura && (
+        <div data-lightbox-group class="mt-10">
+          <a
+            data-lightbox-item
+            href={thumbUrl(singura.src, 1600)}
+            data-srcset={thumbSrcset(singura.src, [960, 1600])}
+            data-caption={memory.data.title}
+            data-memory-href=""
+            data-lang={memory.data.lang}
+            class="block"
+          >
+            <img
+              src={thumbUrl(singura.src, 960)}
+              srcset={thumbSrcset(singura.src, [480, 960, 1600])}
+              sizes="(min-width:768px) 48rem, 100vw"
+              width={singura.width}
+              height={singura.height}
+              alt={singura.alt}
+              loading="lazy"
+              decoding="async"
+              class="h-auto w-full rounded-lg"
+            />
+          </a>
+        </div>
+      )
+    }
+    {
+      images.length > 1 && (
+        <ul data-lightbox-group class="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {images.map((img) => (
+            <li>
+              <a
+                data-lightbox-item
+                href={thumbUrl(img.src, 1600)}
+                data-srcset={thumbSrcset(img.src, [960, 1600])}
+                data-caption={memory.data.title}
+                data-memory-href=""
+                data-lang={memory.data.lang}
+                class="block overflow-hidden rounded-lg"
+              >
+                <img
+                  src={thumbUrl(img.src, 480)}
+                  srcset={thumbSrcset(img.src, [480, 960])}
+                  sizes="(min-width:640px) 16rem, 48vw"
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                  decoding="async"
+                  alt={img.alt}
+                  class="aspect-[4/3] w-full object-cover transition-transform hover:scale-[1.02]"
+                />
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
   </article>
+  {images.length > 0 && <Lightbox lang={lang} />}
 </Base>

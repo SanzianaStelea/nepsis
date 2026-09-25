@@ -3,7 +3,7 @@ title: "Biciclete la Neuchâtel"
 year: 2022
 date: 2022-09-11
 images:
-  - src: /img/evenimente/2022-09-biciclete-neuchatel.jpeg
+  - src: /img/amintiri/2022-biciclete-neuchatel/01.jpeg
     alt: "poze cu biciclete"
 lang: ro
 translationKey: amintire-2022-biciclete

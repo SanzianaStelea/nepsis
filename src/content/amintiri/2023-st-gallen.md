@@ -3,7 +3,7 @@ title: "Turul bibliotecii din St. Gallen"
 year: 2023
 date: 2023-10-28
 images:
-  - src: /img/evenimente/2023-10-st.gallen.jpeg
+  - src: /img/amintiri/2023-st-gallen/01.jpeg
     alt: "poza de grup din St. Gallen"
 lang: ro
 translationKey: amintire-2023-st-gallen

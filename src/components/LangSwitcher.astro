@@ -1,6 +1,11 @@
 ---
 import { type Locale, useTranslations, localePath, stripLocale, locales } from '../i18n';
 
+/**
+ * Selectorul de limbă: un buton mic cu codul limbii curente, care deschide
+ * lista celor patru limbi. Comportamentul (deschis/închis, Escape, clic în
+ * afară) vine din src/lib/disclosure.ts, pornit de Header.astro.
+ */
 interface Props {
   lang: Locale;
 }
@@ -13,24 +18,47 @@ const path = rawPath.startsWith('/404') ? '/' : rawPath;
 const names: Record<Locale, string> = { ro: 'Română', fr: 'Français', en: 'English', de: 'Deutsch' };
 ---
 
-<nav aria-label={t('nav.language')} class="flex items-center gap-1 text-sm">
-  {
-    locales.map((l) => (
-      <a
-        href={localePath(l, path)}
-        hreflang={l}
-        lang={l}
-        aria-current={l === lang ? 'true' : undefined}
-        title={names[l]}
-        class:list={[
-          'rounded px-2 py-1 font-medium uppercase tracking-wide transition-colors',
-          l === lang
-            ? 'bg-brand-800 text-white'
-            : 'text-stone-500 hover:bg-brand-50 hover:text-brand-900',
-        ]}
-      >
-        {l}
-      </a>
-    ))
-  }
-</nav>
+<div class="relative" data-lang data-disclosure>
+  <button
+    type="button"
+    data-disclosure-button
+    aria-expanded="false"
+    aria-controls="limbi"
+    aria-label={`${t('nav.language')}: ${names[lang]}`}
+    class="inline-flex h-11 min-w-11 items-center justify-center gap-1 rounded-md border border-stone-300 px-2 text-sm font-semibold uppercase text-stone-700 hover:bg-brand-50"
+  >
+    {lang}
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-3 w-3 transition-transform" data-chevron fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+  <ul
+    id="limbi"
+    hidden
+    class="absolute right-0 top-full z-50 mt-1 w-44 rounded-lg border border-stone-200 bg-white py-1 shadow-lg"
+  >
+    {
+      locales.map((l) => (
+        <li>
+          <a
+            href={localePath(l, path)}
+            hreflang={l}
+            lang={l}
+            aria-current={l === lang ? 'true' : undefined}
+            class:list={[
+              'flex min-h-11 items-center justify-between px-4 text-sm text-stone-700 hover:bg-brand-50',
+              l === lang && 'font-semibold text-brand-900',
+            ]}
+          >
+            {names[l]}
+            {l === lang && (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4 text-brand-700" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m5 12 5 5 9-10" />
+              </svg>
+            )}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

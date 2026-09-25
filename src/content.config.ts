@@ -38,6 +38,11 @@ const amintiri = defineCollection({
     images: z
       .array(z.object({ src: z.string(), alt: z.string() }))
       .default([]),
+    // Locul (opțional), afișat lângă dată: „2 noiembrie 2025 · Geneva”.
+    location: z.string().optional(),
+    // Ce mai trebuie adus pentru amintirea asta (text, poze, traducere). Nu se
+    // afișează pe site — apare doar ca avertisment la build, ca listă de lucru.
+    missing: z.array(z.enum(['text', 'photos', 'translation'])).default([]),
     lang: langSchema,
     translationKey: z.string(),
   }),
@@ -67,6 +72,14 @@ const membri = defineCollection({
     // Opțională: nu pentru toți e stabilită încă parohia.
     parish: z.string().optional(),
     photo: z.string().optional(),
+    // Încadrarea pozei în cerc, ca `object-position` din CSS: „top”, „center”, „50% 20%”.
+    photoPosition: z.string().optional(),
+    // `activ` = în echipa de acum; `alumni` = fost coordonator (apare la „Alumni”).
+    status: z.enum(['activ', 'alumni']).default('activ'),
+    // Perioada în care a fost în echipă, pentru alumni (ex. „2019–2023”).
+    period: z.string().optional(),
+    // `preot`: numele se afișează cu „Părintele” / „Père” / „Father” / „Vater” în față.
+    honorific: z.enum(['preot']).optional(),
     // Poziția în listă: mai mic = mai în față.
     order: z.number().default(99),
   }),

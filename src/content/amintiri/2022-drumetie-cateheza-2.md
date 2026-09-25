@@ -3,7 +3,7 @@ title: "A doua drumeție-cateheză cu Părintele Dionisie"
 year: 2022
 date: 2022-09-17
 images:
-  - src: /img/evenimente/2022-09-drumetie2.jpeg
+  - src: /img/amintiri/2022-drumetie-cateheza-2/01.jpeg
     alt: "poze pe munte"
 lang: ro
 translationKey: amintire-2022-drumetie-2

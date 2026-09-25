@@ -2,7 +2,7 @@
 title: "Hramul Nepsis — Sfântul Ioan Casian"
 date: 2026-02-28
 location: "Mănăstirea «Acoperământul Maicii Domnului», Les Sciernes d'Albeuve"
-image: /img/2026-hram-RO.jpeg
+image: /img/evenimente/2026-02-28-hram-sf-ioan-casian/afis-ro.jpeg
 imageAlt: "Afișul Hramului Nepsis 2026 — Sfântul Ioan Casian"
 registrationLink: https://forms.gle/Mb93HsvSYkHwVHWv6
 lang: ro

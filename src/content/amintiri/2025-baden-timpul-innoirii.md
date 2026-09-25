@@ -3,8 +3,13 @@ title: "Timpul Înnoirii — vizită la Baden"
 year: 2025
 date: 2025-10-05
 images:
-  - src: /img/2025-octombrie-baden-1.jpeg
-    alt: "Poză Grup Baden"
+  - src: /img/amintiri/2025-baden-timpul-innoirii/01.jpeg
+    alt: "Fotografie de grup la Baden"
+  - src: /img/amintiri/2025-baden-timpul-innoirii/02.jpg
+    alt: "Prezentarea proiectului Nepsis în sala parohiei din Baden"
+  - src: /img/amintiri/2025-baden-timpul-innoirii/03.jpg
+    alt: "Tineri pregătind masa în sala parohiei"
+location: "Baden"
 lang: ro
 translationKey: amintire-2025-baden
 ---

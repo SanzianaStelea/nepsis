@@ -2,7 +2,7 @@
 title: "Vizită la Geneva (cu prezența Înaltpreasfințitului Mitropolit Iosif)"
 date: 2025-11-02
 location: "Geneva"
-image: /img/2025-nov-Geneva1.jpeg
+image: /img/amintiri/2025-vizita-geneva/01.jpeg
 imageAlt: "Vizită Geneva 2025 cu ÎPS Iosif"
 lang: ro
 translationKey: geneva-2025

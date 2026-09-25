@@ -4,7 +4,7 @@ year: 2020
 date: 2020-04-13
 showDate: false
 images:
-  - src: /img/2020_psaltica.jpeg
+  - src: /img/amintiri/2020-lectii-psaltica/01.jpeg
     alt: "Poza repetitie de psaltica pe Zoom"
 lang: ro
 translationKey: amintire-2020-psaltica

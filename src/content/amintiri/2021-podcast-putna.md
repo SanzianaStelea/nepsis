@@ -4,7 +4,7 @@ year: 2021
 date: 2021-09-01
 showDate: false
 images:
-  - src: /img/2021-09-podcast-pf-daniel.PNG
+  - src: /img/amintiri/2021-podcast-putna/01.png
     alt: "Screenshot din Podcastul Nepsis Elvetia despre Serbarea de la Putna"
 lang: ro
 translationKey: amintire-2021-podcast-putna

@@ -4,7 +4,7 @@ year: 2022
 date: 2022-12-31
 showDate: false
 images:
-  - src: /img/2022-calendar_v16_small.jpg
+  - src: /img/amintiri/2022-calendar/01.jpg
     alt: "Nepsis Elveția - calendar 2022"
 lang: ro
 translationKey: amintire-2022-calendar

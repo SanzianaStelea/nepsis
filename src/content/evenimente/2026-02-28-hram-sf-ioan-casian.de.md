@@ -2,7 +2,7 @@
 title: "Patronatsfest von Nepsis — Heiliger Johannes Cassian"
 date: 2026-02-28
 location: "Kloster „Schutz der Gottesmutter“, Les Sciernes d'Albeuve"
-image: /img/2026-hram-EN.jpeg
+image: /img/evenimente/2026-02-28-hram-sf-ioan-casian/afis-en.jpeg
 imageAlt: "Plakat des Nepsis-Patronatsfests 2026 — Heiliger Johannes Cassian"
 registrationLink: https://forms.gle/Mb93HsvSYkHwVHWv6
 lang: de

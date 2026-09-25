@@ -3,9 +3,9 @@ title: "Pelerinaj la cimitirul militar român de la Soultzmatt"
 year: 2025
 date: 2025-05-31
 images:
-  - src: /img/evenimente/2025_soultzmatt_1.jpeg
+  - src: /img/amintiri/2025-soultzmatt/01.jpeg
     alt: "Poză Soultzmatt 2025"
-  - src: /img/evenimente/2025_soultzmatt_2.jpeg
+  - src: /img/amintiri/2025-soultzmatt/02.jpeg
     alt: "Poză Soultzmatt 2025 - 2"
 lang: ro
 translationKey: amintire-2025-soultzmatt

@@ -1,0 +1,148 @@
+---
+import { type Locale, useTranslations } from '../i18n';
+
+/**
+ * Fotografia mărită, într-un <dialog> nativ. Se pune o singură dată pe pagină.
+ *
+ * Declanșatoarele sunt legăturile `a[data-lightbox-item]` dintr-un
+ * `[data-lightbox-group]`; fiecare trimite direct la varianta de 1600px, deci
+ * fără JavaScript poza se deschide pur și simplu în browser. Atribute:
+ * data-srcset, data-caption, data-memory-href (gol = fără legătură) și data-lang
+ * (limba legendei).
+ */
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const rotund =
+  'inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-brand-900 hover:bg-white';
+---
+
+<dialog
+  id="lightbox"
+  aria-label={t('lightbox.label')}
+  data-position={t('lightbox.position')}
+  class="m-0 h-full max-h-none w-full max-w-none bg-transparent p-4 backdrop:bg-black/85"
+>
+  <figure class="flex h-full flex-col items-center justify-center gap-3" data-lb-figure>
+    {/* Poza (<img>) o adaugă scriptul abia la deschidere: un <img> fără sursă ar conta ca imagine lipsă. */}
+    <figcaption class="text-center text-sm text-white" data-lb-figcaption>
+      <span class="block font-semibold" data-lb-caption></span>
+      <span class="block text-white/80" aria-live="polite" lang={lang} data-lb-position></span>
+      <a class="mt-1 inline-flex min-h-11 items-center underline decoration-white underline-offset-4" lang={lang} data-lb-memory hidden>
+        {t('lightbox.readMemory')}
+      </a>
+    </figcaption>
+  </figure>
+
+  <button type="button" data-lb-close aria-label={t('lightbox.close')} class:list={[rotund, 'absolute right-3 top-3']}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path stroke-linecap="round" d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  </button>
+  <button type="button" data-lb-prev aria-label={t('carousel.prev')} class:list={[rotund, 'absolute left-3 top-1/2 -translate-y-1/2']}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+  <button type="button" data-lb-next aria-label={t('carousel.next')} class:list={[rotund, 'absolute right-3 top-1/2 -translate-y-1/2']}>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+</dialog>
+
+<script>
+  const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+  const q = <T extends Element>(sel: string) => dialog?.querySelector<T>(sel) ?? null;
+  const img = document.createElement('img');
+  img.className = 'max-h-[80vh] w-auto max-w-full object-contain';
+  const figure = q<HTMLElement>('[data-lb-figure]');
+  const figcaption = q<HTMLElement>('[data-lb-figcaption]');
+  const caption = q<HTMLElement>('[data-lb-caption]');
+  const position = q<HTMLElement>('[data-lb-position]');
+  const memoryLink = q<HTMLAnchorElement>('[data-lb-memory]');
+  const closeBtn = q<HTMLButtonElement>('[data-lb-close]');
+  const prevBtn = q<HTMLButtonElement>('[data-lb-prev]');
+  const nextBtn = q<HTMLButtonElement>('[data-lb-next]');
+
+  let items: HTMLAnchorElement[] = [];
+  let index = 0;
+  let trigger: HTMLElement | null = null;
+
+  const show = (i: number) => {
+    if (!dialog || items.length === 0) return;
+    if (!img.isConnected) figure?.prepend(img);
+    index = (i + items.length) % items.length;
+    const a = items[index]!;
+    img.removeAttribute('src');
+    img.srcset = a.dataset.srcset ?? '';
+    img.sizes = '100vw';
+    img.src = a.href;
+    img.alt = a.querySelector('img')?.alt ?? '';
+    if (caption) caption.textContent = a.dataset.caption ?? '';
+    if (figcaption) figcaption.lang = a.dataset.lang || document.documentElement.lang;
+    if (position) {
+      position.textContent = (dialog.dataset.position ?? '')
+        .replace('{i}', String(index + 1))
+        .replace('{total}', String(items.length));
+    }
+    if (memoryLink) {
+      const href = a.dataset.memoryHref;
+      memoryLink.hidden = !href;
+      if (href) memoryLink.href = href;
+    }
+  };
+
+  document.addEventListener('click', (ev) => {
+    if (!dialog || ev.defaultPrevented || ev.button !== 0) return;
+    if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+    const a = (ev.target as Element | null)?.closest<HTMLAnchorElement>('a[data-lightbox-item]');
+    const group = a?.closest('[data-lightbox-group]');
+    if (!a || !group) return;
+    ev.preventDefault();
+    // Doar pozele vizibile (galeria ascunde cu `hidden` ce nu trece de filtre).
+    items = [...group.querySelectorAll<HTMLAnchorElement>('a[data-lightbox-item]')].filter(
+      (el) => !el.closest('[hidden]'),
+    );
+    trigger = a;
+    const multe = items.length > 1;
+    if (prevBtn) prevBtn.hidden = !multe;
+    if (nextBtn) nextBtn.hidden = !multe;
+    show(Math.max(0, items.indexOf(a)));
+    document.documentElement.style.overflow = 'hidden';
+    dialog.showModal();
+    closeBtn?.focus();
+  });
+
+  prevBtn?.addEventListener('click', () => show(index - 1));
+  nextBtn?.addEventListener('click', () => show(index + 1));
+  closeBtn?.addEventListener('click', () => dialog?.close());
+
+  dialog?.addEventListener('keydown', (ev) => {
+    if (items.length < 2) return;
+    if (ev.key === 'ArrowLeft') {
+      ev.preventDefault();
+      show(index - 1);
+    } else if (ev.key === 'ArrowRight') {
+      ev.preventDefault();
+      show(index + 1);
+    }
+  });
+
+  // Clic pe fundal (în afara pozei și a butoanelor) închide.
+  dialog?.addEventListener('click', (ev) => {
+    if (ev.target === dialog || ev.target === figure) dialog.close();
+  });
+
+  dialog?.addEventListener('close', () => {
+    document.documentElement.style.overflow = '';
+    img.removeAttribute('src');
+    img.removeAttribute('srcset');
+    img.remove();
+    trigger?.focus();
+    trigger = null;
+  });
+</script>
